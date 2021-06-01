@@ -5,6 +5,8 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <RootNamespace>Subnautica_Mod_Manager</RootNamespace>
     <UseWPF>true</UseWPF>
+    <SignAssembly>false</SignAssembly>
+    <ApplicationIcon>icon.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>

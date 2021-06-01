@@ -5,12 +5,24 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Subnautica_Mod_Manager"
         mc:Ignorable="d"
-        Title="Subnautica Mod Manager" Height="471" Width="800">
-    <StackPanel>
-        <Button Name="OpenSettingsBtn">Settings</Button>
-        <Button Name="ApplyModifsBtn">Apply Modifications</Button>
-        <Button Name="SearchForLastVerBtn">Search For Last Version</Button>
-        <ListView Name="modListControl" Height="339">
+        Title="Subnautica Mod Manager" Height="500" Width="800">
+    <DockPanel>
+        <!--#region Buttons-->
+        <Button DockPanel.Dock="Top" Name="OpenSettingsBtn">Settings</Button>
+        <Button DockPanel.Dock="Top" Name="ApplyModifsBtn">Apply Modifications</Button>
+        <Button DockPanel.Dock="Top" Name="SearchForLastVerBtn">Search For Last Version</Button>
+        <ComboBox DockPanel.Dock="Top" Name="ShowWhatComboBox">
+            <ComboBox.ItemTemplate>
+                <DataTemplate>
+                    <TextBlock Text="{Binding}"/>
+                </DataTemplate>
+            </ComboBox.ItemTemplate>
+        </ComboBox>
+        <!--#endregion-->
+        <Button Name="StartGameBtn" Background="#FF74E274" BorderThickness="3" BorderBrush="Black" Height="35" DockPanel.Dock="Bottom">
+            Start Game
+        </Button>
+        <ListView Name="InstalledModsListControl" Height="340" Visibility="Visible">
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="Active" Width="50">
@@ -32,8 +44,24 @@
                 </GridView>
             </ListView.View>
         </ListView>
-        <Button Name="StartGameBtn" Background="#FF74E274" BorderThickness="3" BorderBrush="Black" Height="35">
-            Start Game
-        </Button>
-    </StackPanel>
+        <ListView Name="OnlineModListControl" Height="340" Visibility="Collapsed">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="Icon">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <Image Source="{Binding OnlineInfo.picture_url}"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="Name" DisplayMemberBinding="{Binding Name}"/>
+                </GridView>
+            </ListView.View>
+            <ListView.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel Orientation="Horizontal"/>
+                </ItemsPanelTemplate>
+            </ListView.ItemsPanel>
+        </ListView>
+    </DockPanel>
 </Window>
