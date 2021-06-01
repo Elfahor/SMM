@@ -1,0 +1,39 @@
+﻿<Window x:Class="Subnautica_Mod_Manager.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Subnautica_Mod_Manager"
+        mc:Ignorable="d"
+        Title="Subnautica Mod Manager" Height="450" Width="800">
+    <StackPanel>
+        <Button Name="OpenSettingsBtn">Settings</Button>
+        <Button Name="ApplyModifsBtn">Apply Modifications</Button>
+        <Button Name="SearchForLastVerBtn">Search For Last Version</Button>
+        <ListView Name="modListControl" Height="339">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="Active" Width="50">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <CheckBox IsChecked="{Binding ModJson.Enable}"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="Mod" DisplayMemberBinding="{Binding Name}" Width="200"/>
+                    <GridViewColumn Header="Dependencies" Width="200">
+                        <GridViewColumn.CellTemplate>
+                            <DataTemplate>
+                                <ListBox ItemsSource="{Binding ModJson.Dependencies}" Width="150"/>
+                            </DataTemplate>
+                        </GridViewColumn.CellTemplate>
+                    </GridViewColumn>
+                    <GridViewColumn Header="Current Version" Width="100" DisplayMemberBinding="{Binding ModJson.Version}"/>
+                </GridView>
+            </ListView.View>
+        </ListView>
+        <Button Name="StartGameBtn" Background="#FF74E274" BorderThickness="3" BorderBrush="Black" Height="35">
+            Start Game
+        </Button>
+    </StackPanel>
+</Window>

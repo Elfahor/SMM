@@ -1,0 +1,24 @@
+﻿<Window x:Class="Subnautica_Mod_Manager.NexusApiInfo"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Subnautica_Mod_Manager"
+        mc:Ignorable="d"
+        Title="Nexus API Info" Height="450" Width="800">
+    <StackPanel Margin="20">
+        <TextBlock>In order to connect to Nexus Mods, the website where all Subnautica mods are stored, you have to provide an API key.</TextBlock>
+        <TextBlock>It is a private key linked to your account.</TextBlock>
+        <TextBlock>If you choose to give us your API key, you will grant us a limited access to your account.</TextBlock>
+        <TextBlock> We will only use it to download mods, check versions and get a list of mods.</TextBlock>
+        <TextBlock>You can access it from <Bold><Hyperlink NavigateUri="https://www.nexusmods.com/users/myaccount?tab=api%20access" RequestNavigate="HyperlinkGetApiKey_RequestNavigate">there</Hyperlink></Bold></TextBlock>
+        <TextBlock>Right now, SMM is not officially registered by Nexus. It's planned!</TextBlock>
+        <TextBlock>Scroll down to this:</TextBlock>
+        <Image Source="/Resources/NexusApiKeyScreenshot.png" Width="751"/>
+        <TextBlock>Click on "Request an API key. You can then paste it in the text field.</TextBlock>
+        <TextBlock>You will have to do that each time you restart SMM, unless you check "Save my API Key" in the settings.</TextBlock>
+        <TextBlock>If you do so, it will be saved along with your settings on disk. This is not secure! I'm searching for another way of doing it.</TextBlock>
+        <TextBlock/>
+        <Button x:Name="CloseWinBtn" Height="79" Content="Close this window" Width="703"/>
+    </StackPanel>
+</Window>

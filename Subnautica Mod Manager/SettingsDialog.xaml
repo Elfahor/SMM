@@ -1,0 +1,29 @@
+﻿<Window x:Class="Subnautica_Mod_Manager.SettingsDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Subnautica_Mod_Manager"
+        mc:Ignorable="d"
+        Title="SettingsDialog" Height="200" Width="557">
+    <StackPanel Margin="10">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="100"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="20"/>
+                <RowDefinition Height="20"/>
+                <RowDefinition Height="20"/>
+            </Grid.RowDefinitions>
+            <TextBlock Grid.Row="0" Grid.Column="0">Game Path</TextBlock>
+            <TextBox Name="GamePathTextBox" Grid.Row="0" Grid.Column="1">D:\Programmes\steamapps\common\Subnautica</TextBox>
+            <TextBlock Grid.Row="1" Grid.Column="0">Nexus API Key</TextBlock>
+            <PasswordBox Name="NexusAPIKeyBox" Grid.Row="1" Grid.Column="1"></PasswordBox>
+            <TextBlock Grid.Row="2" Grid.Column="0">Save API Key</TextBlock>
+            <CheckBox Grid.Row="2" Grid.Column="1" Name="SaveApiKeyCheckBox"/>
+        </Grid>
+        <Button Name="OpenNexusApiInfoBtn">Info about the Nexus API key</Button>
+    </StackPanel>
+</Window>
