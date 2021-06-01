@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text.Json;
 using System.Windows;
 
 namespace Subnautica_Mod_Manager
@@ -20,7 +21,9 @@ namespace Subnautica_Mod_Manager
 
 			OpenSettingsBtn.Click += OpenSettingsBtn_Click;
 			ApplyModifsBtn.Click += ApplyModifsBtn_Click;
+			SearchForLastVerBtn.Click += SearchForLastVerBtn_Click;
 			StartGameBtn.Click += StartGameBtn_Click;
+
 
 			string[] installedMods = Directory.GetDirectories(Properties.Settings.Default.GamePath + "\\QMods", "*", SearchOption.TopDirectoryOnly);
 
@@ -35,9 +38,17 @@ namespace Subnautica_Mod_Manager
 			modListControl.ItemsSource = ModList;
 		}
 
+		private void SearchForLastVerBtn_Click(object sender, RoutedEventArgs e)
+		{
+			foreach (Mod mod in ModList)
+			{
+				int modId = int.Parse(mod.ModJson.NexusId.Subnautica);
+			}
+		}
+
 		private void StartGameBtn_Click(object sender, RoutedEventArgs e)
 		{
-			if (!AreDependenciesFine())
+			if (!DependenciesOk())
 			{
 				MessageBox.Show("Some mods have dependencies issues", "Dependency check", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK, MessageBoxOptions.None);
 				return;
@@ -47,17 +58,13 @@ namespace Subnautica_Mod_Manager
 			game.Start();
 		}
 
-		private bool AreDependenciesFine()
-		{
-			foreach (Mod mod in ModList)
-			{
-				foreach (string dependencie in mod.ModJson.Dependencies)
-				{
-					if (!ModList.Any((m) => m.ModJson.DisplayName == dependencie)) return false;
-				}
-			}
-			return true;
-		}
+		private bool DependenciesOk() =>
+			ModList.All((m) =>
+				m.ModJson.Dependencies.All((d) =>
+					ModList.Any((mc) => mc.ModJson.Id == d
+					)
+				)
+			);
 
 		private void ApplyModifsBtn_Click(object sender, RoutedEventArgs e)
 		{

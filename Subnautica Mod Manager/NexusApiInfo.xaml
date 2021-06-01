@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Subnautica_Mod_Manager"
         mc:Ignorable="d"
-        Title="Nexus API Info" Height="450" Width="800">
+        Title="Nexus API Info" Height="463" Width="800">
     <StackPanel Margin="20">
         <TextBlock>In order to connect to Nexus Mods, the website where all Subnautica mods are stored, you have to provide an API key.</TextBlock>
         <TextBlock>It is a private key linked to your account.</TextBlock>

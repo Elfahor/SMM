@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Subnautica_Mod_Manager"
         mc:Ignorable="d"
-        Title="Subnautica Mod Manager" Height="450" Width="800">
+        Title="Subnautica Mod Manager" Height="471" Width="800">
     <StackPanel>
         <Button Name="OpenSettingsBtn">Settings</Button>
         <Button Name="ApplyModifsBtn">Apply Modifications</Button>

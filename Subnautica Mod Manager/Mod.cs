@@ -6,10 +6,18 @@ namespace Subnautica_Mod_Manager
 {
 	public class Mod
 	{
+		public static JsonSerializerOptions JsonSerializerOptions =
+			new JsonSerializerOptions() { WriteIndented = true };
+
 		public Mod(string path)
 		{
 			Name = Path.GetFileName(path);
 			ModJsonPath = path + "\\mod.json";
+			GetFromJson();
+		}
+
+		private void GetFromJson()
+		{
 			if (File.Exists(ModJsonPath))
 			{
 				ModJson = JsonSerializer.Deserialize<ModJsonFile>(File.ReadAllText(ModJsonPath));
@@ -25,7 +33,7 @@ namespace Subnautica_Mod_Manager
 
 		public string ModJsonPath { get; }
 
-		public ModJsonFile ModJson { get; }
+		public ModJsonFile ModJson { get; private set; }
 
 		public string LastVersion { get; set; }
 
@@ -58,6 +66,7 @@ namespace Subnautica_Mod_Manager
 			public Nexusid NexusId { get; set; }
 			public Versionchecker VersionChecker { get; set; }
 			public string AssemblyName { get; set; }
+			public string EntryMethod { get; set; }
 
 			public struct Nexusid
 			{
@@ -72,8 +81,9 @@ namespace Subnautica_Mod_Manager
 
 		internal void ApplyModJson()
 		{
-			string newContent = JsonSerializer.Serialize(ModJson);
+			string newContent = JsonSerializer.Serialize(ModJson, JsonSerializerOptions);
 			File.WriteAllText(ModJsonPath, newContent);
+			GetFromJson();
 		}
 	}
 }
