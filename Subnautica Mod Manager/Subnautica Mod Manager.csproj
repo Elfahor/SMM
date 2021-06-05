@@ -10,10 +10,18 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Resources\DownloadBtn.png" />
     <None Remove="Resources\NexusApiKeyScreenshot.png" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Syroot.Windows.IO.KnownFolders" Version="1.2.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\DownloadBtn.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Resources\NexusApiKeyScreenshot.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Resource>

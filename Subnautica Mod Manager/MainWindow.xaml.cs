@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Text.Json;
 using System.Windows;
+using System.Windows.Controls;
 
 namespace Subnautica_Mod_Manager
 {
@@ -17,7 +18,10 @@ namespace Subnautica_Mod_Manager
 		public List<Mod> InstalledModList;
 		public List<Mod> LatestModList;
 		public List<Mod> PopularModList;
-		private readonly HttpClient httpClient = new HttpClient();
+
+		private UserData UserData { get; }
+
+		public readonly HttpClient httpClient = new HttpClient();
 
 		public MainWindow()
 		{
@@ -25,7 +29,7 @@ namespace Subnautica_Mod_Manager
 
 			OpenSettingsBtn.Click += OpenSettingsBtn_Click;
 			ApplyModifsBtn.Click += ApplyModifsBtn_Click;
-			SearchForLastVerBtn.Click += SearchForLastVerBtn_Click;
+			//SearchForLastVerBtn.Click += SearchForLastVerBtn_Click;
 			StartGameBtn.Click += StartGameBtn_Click;
 
 			httpClient.BaseAddress = new Uri("https://api.nexusmods.com/v1/games/subnautica/");
@@ -34,6 +38,8 @@ namespace Subnautica_Mod_Manager
 			InstalledModList = GetMods(ModsToShow.ShowInstalled);
 			LatestModList = GetMods(ModsToShow.ShowLatest);
 			PopularModList = GetMods(ModsToShow.ShowPopular);
+
+			UserData = new UserData(httpClient);
 
 			string[] listViewModes = Enum.GetNames(typeof(ModsToShow));
 			ShowWhatComboBox.ItemsSource = listViewModes;
@@ -52,11 +58,19 @@ namespace Subnautica_Mod_Manager
 						InstalledModsListControl.Visibility = Visibility.Collapsed;
 						OnlineModListControl.Visibility = Visibility.Visible;
 						OnlineModListControl.ItemsSource = LatestModList;
+						OnlineModListControl.Items.Refresh();
 						break;
 					case ModsToShow.ShowPopular:
 						InstalledModsListControl.Visibility = Visibility.Collapsed;
 						OnlineModListControl.Visibility = Visibility.Visible;
+
+						foreach (Mod item in PopularModList)
+						{
+							Console.WriteLine(item.OnlineInfo is null);
+						}
+
 						OnlineModListControl.ItemsSource = PopularModList;
+						OnlineModListControl.Items.Refresh();
 						break;
 				}
 			};
@@ -65,7 +79,7 @@ namespace Subnautica_Mod_Manager
 			OnlineModListControl.ItemsSource = PopularModList;
 		}
 
-		private enum ModsToShow
+		public enum ModsToShow
 		{
 			ShowInstalled,
 			ShowLatest,
@@ -80,7 +94,7 @@ namespace Subnautica_Mod_Manager
 				)
 			);
 
-		private List<Mod> GetMods(ModsToShow modsToShow)
+		public List<Mod> GetMods(ModsToShow modsToShow)
 		{
 			List<Mod> mods = new List<Mod>();
 
@@ -102,7 +116,7 @@ namespace Subnautica_Mod_Manager
 				List<Mod.DownloadedModData> downloadedModData = JsonSerializer.Deserialize<List<Mod.DownloadedModData>>(response.Content.ReadAsStringAsync().Result);
 				foreach (Mod.DownloadedModData item in downloadedModData)
 				{
-					mods.Add(new Mod(item));
+					mods.Add(new Mod(item, httpClient));
 				}
 			}
 			else if (modsToShow == ModsToShow.ShowPopular)
@@ -111,7 +125,7 @@ namespace Subnautica_Mod_Manager
 				List<Mod.DownloadedModData> downloadedModData = JsonSerializer.Deserialize<List<Mod.DownloadedModData>>(response.Content.ReadAsStringAsync().Result);
 				foreach (Mod.DownloadedModData item in downloadedModData)
 				{
-					mods.Add(new Mod(item));
+					mods.Add(new Mod(item, httpClient));
 				}
 			}
 
@@ -154,6 +168,27 @@ namespace Subnautica_Mod_Manager
 			using Process game = new Process();
 			game.StartInfo.FileName = Path.Combine(Properties.Settings.Default.GamePath, "Subnautica.exe");
 			game.Start();
+		}
+
+		private void DownloadBtn_Click(object sender, RoutedEventArgs e)
+		{
+			Mod modSelected = (Mod)((Button)sender).DataContext;
+			if (UserData.is_premium)
+			{
+				//handle premium mod download
+			}
+			else
+			{
+				DownloadPage dlpage = new DownloadPage(modSelected)
+				{
+					Owner = this,
+				};
+				dlpage.Closed += (sender, e) =>
+				{
+					InstalledModList = GetMods(ModsToShow.ShowInstalled);
+				};
+				dlpage.ShowDialog();
+			}
 		}
 	}
 }
