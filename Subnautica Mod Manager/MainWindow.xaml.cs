@@ -7,6 +7,7 @@ using System.Net.Http;
 using System.Text.Json;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 
 namespace Subnautica_Mod_Manager
 {
@@ -15,9 +16,11 @@ namespace Subnautica_Mod_Manager
 	/// </summary>
 	public partial class MainWindow : Window
 	{
-		public List<Mod> InstalledModList;
-		public List<Mod> LatestModList;
-		public List<Mod> PopularModList;
+		private List<Mod> InstalledModList;
+		private List<Mod> LatestModList;
+		private List<Mod> PopularModList;
+
+		private ModsToShow modsShown;
 
 		private UserData UserData { get; }
 
@@ -45,29 +48,29 @@ namespace Subnautica_Mod_Manager
 			ShowWhatComboBox.ItemsSource = listViewModes;
 			ShowWhatComboBox.SelectedIndex = 0;
 
+			modsShown = ModsToShow.ShowInstalled;
+
 			ShowWhatComboBox.SelectionChanged += (sender, e) =>
 			{
 				ModsToShow selectedItem = (ModsToShow)ShowWhatComboBox.SelectedIndex;
+				modsShown = selectedItem;
 				switch (selectedItem)
 				{
 					case ModsToShow.ShowInstalled:
-						InstalledModsListControl.Visibility = Visibility.Visible;
+						InstalledModListControl.Visibility = Visibility.Visible;
 						OnlineModListControl.Visibility = Visibility.Collapsed;
+						InstalledModListControl.Items.Refresh();
 						break;
 					case ModsToShow.ShowLatest:
-						InstalledModsListControl.Visibility = Visibility.Collapsed;
+						InstalledModListControl.Visibility = Visibility.Collapsed;
 						OnlineModListControl.Visibility = Visibility.Visible;
+
 						OnlineModListControl.ItemsSource = LatestModList;
 						OnlineModListControl.Items.Refresh();
 						break;
 					case ModsToShow.ShowPopular:
-						InstalledModsListControl.Visibility = Visibility.Collapsed;
+						InstalledModListControl.Visibility = Visibility.Collapsed;
 						OnlineModListControl.Visibility = Visibility.Visible;
-
-						foreach (Mod item in PopularModList)
-						{
-							Console.WriteLine(item.OnlineInfo is null);
-						}
 
 						OnlineModListControl.ItemsSource = PopularModList;
 						OnlineModListControl.Items.Refresh();
@@ -75,8 +78,13 @@ namespace Subnautica_Mod_Manager
 				}
 			};
 
-			InstalledModsListControl.ItemsSource = InstalledModList;
+			InstalledModListControl.ItemsSource = InstalledModList;
 			OnlineModListControl.ItemsSource = PopularModList;
+
+			CollectionView viewInstalled = (CollectionView)CollectionViewSource.GetDefaultView(InstalledModListControl.ItemsSource);
+			viewInstalled.Filter = FilterByModName;
+			CollectionView viewOnline = (CollectionView)CollectionViewSource.GetDefaultView(OnlineModListControl.ItemsSource);
+			viewOnline.Filter = FilterByModName;
 		}
 
 		public enum ModsToShow
@@ -173,22 +181,54 @@ namespace Subnautica_Mod_Manager
 		private void DownloadBtn_Click(object sender, RoutedEventArgs e)
 		{
 			Mod modSelected = (Mod)((Button)sender).DataContext;
+			StartDownloadOfMod(modSelected);
+		}
+
+		private void StartDownloadOfMod(Mod mod)
+		{
 			if (UserData.is_premium)
 			{
 				//handle premium mod download
 			}
 			else
 			{
-				DownloadPage dlpage = new DownloadPage(modSelected)
+				DownloadPage dlpage = new DownloadPage(mod)
 				{
 					Owner = this,
 				};
 				dlpage.Closed += (sender, e) =>
 				{
 					InstalledModList = GetMods(ModsToShow.ShowInstalled);
+					InstalledModListControl.Items.Refresh();
 				};
 				dlpage.ShowDialog();
 			}
+		}
+
+		private bool FilterByModName(object item)
+		{
+			if (String.IsNullOrEmpty(SearchArea.Text))
+			{
+				return true;
+			}
+			else
+			{
+				string toSearch = modsShown == ModsToShow.ShowInstalled ? (item as Mod).ModJson.DisplayName : (item as Mod).OnlineInfo.name;
+				return toSearch.IndexOf(SearchArea.Text, StringComparison.OrdinalIgnoreCase) >= 0;
+			}
+		}
+
+		private void SearchArea_TextChanged(object sender, TextChangedEventArgs e)
+		{
+			ListView listView = modsShown == ModsToShow.ShowInstalled ? InstalledModListControl : OnlineModListControl;
+			CollectionViewSource.GetDefaultView(listView.ItemsSource).Refresh();
+		}
+
+		private void GetThisModBtn_Click(object sender, RoutedEventArgs e)
+		{
+			string modOnlineInfo = httpClient.GetStringAsync($"mods/{SearchArea.Text}.json").Result;
+			Mod mod = new Mod(JsonSerializer.Deserialize<Mod.DownloadedModData>(modOnlineInfo), httpClient);
+			StartDownloadOfMod(mod);
 		}
 	}
 }

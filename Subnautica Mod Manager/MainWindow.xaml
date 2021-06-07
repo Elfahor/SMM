@@ -18,11 +18,15 @@
                 </DataTemplate>
             </ComboBox.ItemTemplate>
         </ComboBox>
+        <StackPanel Orientation="Horizontal" DockPanel.Dock="Top">
+            <TextBox Name="SearchArea" TextChanged="SearchArea_TextChanged"  Width="400"/>
+            <Button Name="GetThisModBtn" Click="GetThisModBtn_Click" Width="400"/>
+        </StackPanel>
         <!--#endregion-->
         <Button Name="StartGameBtn" Background="#FF74E274" BorderThickness="3" BorderBrush="Black" Height="35" DockPanel.Dock="Bottom">
             Start Game
         </Button>
-        <ListView Name="InstalledModsListControl" Height="340" Visibility="Visible" Width="{Binding ElementName=MainWindow, Path=ActualWidth}">
+        <ListView Name="InstalledModListControl" Height="340" Visibility="Visible" Width="{Binding ElementName=MainWindow, Path=ActualWidth}">
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="Active">
@@ -32,11 +36,11 @@
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
-                    <GridViewColumn Header="Mod" DisplayMemberBinding="{Binding Name}" Width="200"/>
+                    <GridViewColumn Header="Mod" DisplayMemberBinding="{Binding Name}" Width="300"/>
                     <GridViewColumn Header="Dependencies" Width="200">
                         <GridViewColumn.CellTemplate>
                             <DataTemplate>
-                                <ListBox ItemsSource="{Binding ModJson.Dependencies}" Width="150"/>
+                                <ListBox ItemsSource="{Binding ModJson.Dependencies}" Width="200"/>
                             </DataTemplate>
                         </GridViewColumn.CellTemplate>
                     </GridViewColumn>
@@ -47,7 +51,7 @@
         <ListView Name="OnlineModListControl" Visibility="Collapsed" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
             <ListView.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <WrapPanel ItemWidth="200"/>
+                    <WrapPanel ItemWidth="250" ItemHeight="140.625"/>
                 </ItemsPanelTemplate>
             </ListView.ItemsPanel>
             <ListView.ItemTemplate>

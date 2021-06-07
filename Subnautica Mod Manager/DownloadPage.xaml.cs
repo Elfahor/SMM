@@ -1,4 +1,4 @@
-﻿using Microsoft.VisualBasic.FileIO;
+﻿using Microsoft.VisualBasic.FileIO; // bad
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -44,7 +44,7 @@ namespace Subnautica_Mod_Manager
 
 			DlBtn.Click += (sender, e) =>
 			{
-				Process.Start(new ProcessStartInfo($"https://www.nexusmods.com/subnautica/mods/{mod.OnlineInfo.mod_id}?tab=files&file_id=3452") { UseShellExecute = true });
+				Process.Start(new ProcessStartInfo($"https://www.nexusmods.com/subnautica/mods/{mod.OnlineInfo.mod_id}?tab=files&file_id={mod.Files.files[mod.Files.files.Length - 1].file_id}") { UseShellExecute = true });
 			};
 
 			DledBtn.Click += (sender, e) =>
@@ -55,13 +55,20 @@ namespace Subnautica_Mod_Manager
 				switch (fileExtension)
 				{
 					case ".zip":
-						HandleZipQMod(fullPath);
+						ModInstaller.HandleZipQMod(fullPath);
 						break;
 					case ".exe":
 						Process.Start(new ProcessStartInfo(fullPath));
 						break;
 					default:
-						MessageBox.Show("This mod cannot be automatically installed. Please refer to its installation instructions", "Unable to auto-install", MessageBoxButton.OK, MessageBoxImage.Warning, MessageBoxResult.OK, MessageBoxOptions.None);
+						MessageBox.Show(
+							"This mod cannot be automatically installed. Please refer to its installation instructions",
+							"Unable to auto-install",
+							MessageBoxButton.OK,
+							MessageBoxImage.Warning,
+							MessageBoxResult.OK,
+							MessageBoxOptions.None
+						);
 						break;
 				}
 				Close();
@@ -92,46 +99,5 @@ namespace Subnautica_Mod_Manager
 			throw new ArgumentException("This mod has no MAIN release");
 		}
 
-		private void HandleZipQMod(string fullPath)
-		{
-			string tmpPath = Path.Combine(Path.GetTempPath(), "Subnautica Mod Manager", Path.GetFileName(fullPath));
-			if (Directory.Exists(tmpPath))
-			{
-				Directory.Delete(tmpPath, true);
-			}
-
-			DirectoryInfo dir = Directory.CreateDirectory(tmpPath);
-
-			ZipFile.ExtractToDirectory(fullPath, tmpPath);
-			DirectoryInfo actualQmodDir = getQmodDir(dir);
-
-
-
-			string destination = Path.Combine(Properties.Settings.Default.GamePath, "QMods", $"{actualQmodDir.Name}");
-			if (Directory.Exists(destination))
-			{
-				Directory.Delete(destination);
-			}
-
-			FileSystem.MoveDirectory(actualQmodDir.FullName, destination);
-
-			dir.Delete(true);
-
-			static DirectoryInfo getQmodDir(DirectoryInfo dir)
-			{
-				foreach (FileInfo f in dir.EnumerateFiles())
-				{
-					if (f.Name == "mod.json")
-					{
-						return dir;
-					}
-				}
-				foreach (DirectoryInfo f in dir.EnumerateDirectories())
-				{
-					return getQmodDir(f);
-				}
-				return null;
-			}
-		}
 	}
 }
