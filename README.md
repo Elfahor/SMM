@@ -8,18 +8,18 @@ Pictures
 
 Roadmap
 ---
-   - List of installed mods
-       - ~~Activation / Deactivation~~
-       - ~~Checking dependencies~~
-   - ~~Game launch~~
-   - ~~List of online mods~~
-   - Installation of mods
-       - ~~Installation of normal mods~~
-       - ~~Installation of CustomCraft mods~~
-       - Installation of CustomPoster mods
-       - Installation of CustomBattery mods
-       - Installation of CustomHullPlates mods
-   - Code cleaning
-   - Interface cleaning
-   - bug fixes (a lot)
-
+   - [x] List of installed mods
+       - [x] Activation / Deactivation
+       - [x] Checking dependencies
+   - [x] Game launch
+   - [x] List of online mods
+   - [ ] Installation of mods
+       - [x] Installation of normal mods
+       - [x] Installation of CustomCraft mods
+       - [ ] Installation of CustomPoster mods
+       - [ ] Installation of CustomBattery mods
+       - [ ] Installation of CustomHullPlates mods
+   - [ ] Code cleaning
+   - [ ] Interface cleaning
+   - [ ] bug fixes
+   - [ ] beta publication
