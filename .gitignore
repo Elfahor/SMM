@@ -338,3 +338,8 @@ ASALocalRun/
 
 # BeatPulse healthcheck temp database
 healthchecksdb
+
+# 7-zip dependencies
+Subnautica Mod Manager/7za.exe
+Subnautica Mod Manager/7za.dll
+Subnautica Mod Manager/7zxa.dll
