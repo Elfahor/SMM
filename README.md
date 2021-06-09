@@ -16,7 +16,7 @@ Roadmap
    - [ ] Installation of mods
        - [x] Installation of normal mods
        - [x] Installation of CustomCraft mods
-       - [ ] Installation of CustomPoster mods
+       - [x] Installation of CustomPoster mods
        - [ ] Installation of CustomBattery mods
        - [ ] Installation of CustomHullPlates mods
    - [ ] Code cleaning
