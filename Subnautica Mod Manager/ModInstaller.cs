@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualBasic.FileIO;
 using System.IO;
+using System.Linq;
 using System.Windows;
 
 namespace Subnautica_Mod_Manager
@@ -17,7 +18,8 @@ namespace Subnautica_Mod_Manager
 			}
 
 			DirectoryInfo tmpDirForExtraction = Directory.CreateDirectory(tmpPathForExtraction);
-			System.IO.Compression.ZipFile.ExtractToDirectory(downloadedArchivePath, tmpPathForExtraction);
+			//System.IO.Compression.ZipFile.ExtractToDirectory(downloadedArchivePath, tmpPathForExtraction);
+			FileUtils.ExtractArchive(downloadedArchivePath, tmpPathForExtraction);
 
 			// Check if the mod is a CC2
 			DirectoryInfo actualDirToCopy = GetCC2Directory(tmpDirForExtraction);
@@ -28,15 +30,23 @@ namespace Subnautica_Mod_Manager
 				actualDirToCopy = GetCustomPosterDir(tmpDirForExtraction);
 				if (actualDirToCopy is null) // Not CustomPoster
 				{
-					actualDirToCopy = GetQModDir(tmpDirForExtraction);
-					// not custom poster
-					if (actualDirToCopy is null)
+					// try CustomHullPlates
+					actualDirToCopy = GetCustomHullPlatesDir(tmpDirForExtraction);
+					if (actualDirToCopy is null) // not CustomHullPlates
 					{
-						Issue("This mod cannot be automatically installed. Please refer to its installation instructions");
+						actualDirToCopy = GetQModDir(tmpDirForExtraction);
+						if (actualDirToCopy is null) // not QMod
+						{
+							Issue("This mod cannot be automatically installed. Please refer to its installation instructions");
+						}
+						else
+						{
+							InstallQMod(actualDirToCopy);
+						}
 					}
 					else
 					{
-						InstallQMod(actualDirToCopy);
+						InstallCustomHullPlates(actualDirToCopy);
 					}
 				}
 				else
@@ -103,13 +113,65 @@ namespace Subnautica_Mod_Manager
 			}
 		}
 
+		private static DirectoryInfo GetCustomHullPlatesDir(DirectoryInfo dir)
+		{
+			string fileCopyDir = Path.Combine(Path.GetTempPath(), tmpPathName, "chp file copy");
+			Directory.CreateDirectory(fileCopyDir);
+
+			copyFiles(dir, fileCopyDir);
+			if (Directory.GetDirectories(fileCopyDir).Length == 0)
+			{
+				Directory.Delete(fileCopyDir, true);
+				return null;
+			}
+			else
+			{
+				return new DirectoryInfo(fileCopyDir);
+			}
+
+			static void copyFiles(DirectoryInfo from, in string to)
+			{
+				foreach (FileInfo f in from.EnumerateFiles())
+				{
+					string platePath = Path.Combine(to, from.Name);
+					Directory.CreateDirectory(platePath);
+					if (f.Name == "info.json")
+					{
+						string content = File.ReadAllText(f.FullName);
+						if (content.Contains("InternalName") && content.Contains("DisplayName") && content.Contains("Description"))
+						{
+							f.CopyTo(Path.Combine(platePath, f.Name));
+						}
+					}
+					if (f.Name == "icon.png")
+					{
+						f.CopyTo(Path.Combine(to, from.Name, f.Name));
+					}
+
+					if (f.Name == "texture.png")
+					{
+						f.CopyTo(Path.Combine(to, from.Name, f.Name));
+					}
+					if (Directory.GetFileSystemEntries(platePath).Length == 0)
+					{
+						Directory.Delete(platePath);
+					}
+				}
+				foreach (DirectoryInfo d in from.EnumerateDirectories())
+				{
+					copyFiles(d, to);
+				}
+
+			}
+		}
+
 		private static DirectoryInfo GetCustomPosterDir(DirectoryInfo dir)
 		{
 			string fileCopyDir = Path.Combine(Path.GetTempPath(), tmpPathName, "cp file copy");
 			Directory.CreateDirectory(fileCopyDir);
 
 			copyFiles(dir, fileCopyDir);
-			if (Directory.GetDirectories(fileCopyDir).Length == 0)
+			if (Directory.GetDirectories(fileCopyDir).Length == 0 || Directory.GetDirectories(fileCopyDir).Any(d => Directory.GetFiles(d).Length != 3))
 			{
 				Directory.Delete(fileCopyDir, true);
 				return null;
@@ -141,6 +203,10 @@ namespace Subnautica_Mod_Manager
 					if (f.Name == "texture.png")
 					{
 						f.CopyTo(Path.Combine(to, from.Name, f.Name));
+					}
+					if (Directory.GetFileSystemEntries(posterPath).Length == 0)
+					{
+						Directory.Delete(posterPath);
 					}
 				}
 				foreach (DirectoryInfo d in from.EnumerateDirectories())
@@ -208,6 +274,26 @@ namespace Subnautica_Mod_Manager
 				file.MoveTo(destFileName);
 			}
 		}
+
+		private static void InstallCustomHullPlates(DirectoryInfo actualDirToCopy)
+		{
+			string cpPath = Path.Combine(Properties.Settings.Default.GamePath, "QMods", "CustomHullPlates", "HullPlates");
+			if (!Directory.Exists(cpPath))
+			{
+				Issue("Please install CustomPosters beforehand");
+				return;
+			}
+			foreach (DirectoryInfo dir in actualDirToCopy.GetDirectories())
+			{
+				string path = Path.Combine(cpPath, dir.Name);
+				if (Directory.Exists(path))
+				{
+					Directory.Delete(path, true);
+				}
+
+				FileSystem.MoveDirectory(dir.FullName, path);
+			}
+		}
 		private static void InstallCustomPoster(DirectoryInfo actualDirToCopy)
 		{
 			string cpPath = Path.Combine(Properties.Settings.Default.GamePath, "QMods", "CustomPosters", "Posters");
@@ -221,7 +307,7 @@ namespace Subnautica_Mod_Manager
 				string path = Path.Combine(cpPath, dir.Name);
 				if (Directory.Exists(path))
 				{
-					Directory.Delete(path);
+					Directory.Delete(path, true);
 				}
 
 				FileSystem.MoveDirectory(dir.FullName, path);

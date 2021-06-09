@@ -55,6 +55,7 @@ namespace Subnautica_Mod_Manager
 				switch (fileExtension)
 				{
 					case ".zip":
+					case ".7z":
 						ModInstaller.HandleZipQMod(fullPath);
 						break;
 					case ".exe":
