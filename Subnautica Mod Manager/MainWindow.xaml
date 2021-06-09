@@ -10,7 +10,6 @@
         <!--#region Buttons-->
         <Button DockPanel.Dock="Top" Name="OpenSettingsBtn">Settings</Button>
         <Button DockPanel.Dock="Top" Name="ApplyModifsBtn">Apply Modifications</Button>
-        <!--<Button DockPanel.Dock="Top" Name="SearchForLastVerBtn">Search For Last Version</Button>-->
         <ComboBox DockPanel.Dock="Top" Name="ShowWhatComboBox">
             <ComboBox.ItemTemplate>
                 <DataTemplate>

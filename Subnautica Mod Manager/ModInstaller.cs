@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualBasic.FileIO;
+using Subnautica_Mod_Manager.CommonUtils;
 using System.IO;
 using System.Linq;
 using System.Windows;
@@ -18,7 +19,6 @@ namespace Subnautica_Mod_Manager
 			}
 
 			DirectoryInfo tmpDirForExtraction = Directory.CreateDirectory(tmpPathForExtraction);
-			//System.IO.Compression.ZipFile.ExtractToDirectory(downloadedArchivePath, tmpPathForExtraction);
 			FileUtils.ExtractArchive(downloadedArchivePath, tmpPathForExtraction);
 
 			// Check if the mod is a CC2

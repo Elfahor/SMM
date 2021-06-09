@@ -23,24 +23,7 @@ namespace Subnautica_Mod_Manager
 			InitializeComponent();
 
 			this.mod = mod;
-			//var bbcodeParser = new BBCodeParser(new[]
-			//{
-			//	new BBTag("b", "<b>", "</b>"),
-			//	new BBTag("i", "<span style=\"font-style:italic;\">", "</span>"),
-			//	new BBTag("u", "<span style=\"text-decoration:underline;\">", "</span>"),
-			//	new BBTag("code", "<pre class=\"prettyprint\">", "</pre>"),
-			//	new BBTag("img", "<img src=\"${content}\" />", "", false, true),
-			//	new BBTag("quote", "<blockquote>", "</blockquote>"),
-			//	new BBTag("list", "<ul>", "</ul>"),
-			//	new BBTag("*", "<li>", "</li>", true, false),
-			//	new BBTag("url", "<a href=\"${href}\">", "</a>", new BBAttribute("href", ""), new BBAttribute("href", "href")),
-			//	new BBTag("color", "<span style=\"color:${color}\"", "</span>", new BBAttribute("color", "")),
-			//	new BBTag("size", "<a style=\"font-size:${size}px\"", "</a>", new BBAttribute("size", "")),
-			//});
-			//htmlDesc = bbcodeParser.ToHtml(mod.OnlineInfo.description);
 			this.DataContext = this;
-
-			//DescFrame.Source = new System.Uri(modDlUrl);
 
 			DlBtn.Click += (sender, e) =>
 			{
