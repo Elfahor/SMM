@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Subnautica_Mod_Manager.CommonUtils
+namespace SubnauticaModManager.CommonUtils
 {
 	static class StrUtil
 	{

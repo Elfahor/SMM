@@ -7,7 +7,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows;
 
-namespace Subnautica_Mod_Manager
+namespace SubnauticaModManager
 {
 	/// <summary>
 	/// Logique d'interaction pour DownloadPage.xaml

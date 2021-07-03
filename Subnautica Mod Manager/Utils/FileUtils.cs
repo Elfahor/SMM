@@ -1,4 +1,4 @@
-﻿namespace Subnautica_Mod_Manager.CommonUtils
+﻿namespace SubnauticaModManager.CommonUtils
 {
 	internal static class FileUtils
 	{

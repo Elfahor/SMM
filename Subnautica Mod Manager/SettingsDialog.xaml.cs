@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace Subnautica_Mod_Manager
+namespace SubnauticaModManager
 {
 	/// <summary>
 	/// Logique d'interaction pour SettingsDialog.xaml

@@ -9,7 +9,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 
-namespace Subnautica_Mod_Manager
+namespace SubnauticaModManager
 {
 	/// <summary>
 	/// Interaction logic for MainWindow.xaml
@@ -34,6 +34,8 @@ namespace Subnautica_Mod_Manager
 			ApplyModifsBtn.Click += ApplyModifsBtn_Click;
 			//SearchForLastVerBtn.Click += SearchForLastVerBtn_Click;
 			StartGameBtn.Click += StartGameBtn_Click;
+
+			Properties.Settings.Default.Reload();
 
 			httpClient.BaseAddress = new Uri("https://api.nexusmods.com/v1/games/subnautica/");
 			httpClient.DefaultRequestHeaders.Add("apikey", Properties.Settings.Default.NexusApiKey);
@@ -82,8 +84,10 @@ namespace Subnautica_Mod_Manager
 			OnlineModListControl.ItemsSource = PopularModList;
 
 			CollectionView viewInstalled = (CollectionView)CollectionViewSource.GetDefaultView(InstalledModListControl.ItemsSource);
-			viewInstalled.Filter = FilterByModName;
+			if (!(viewInstalled is null))
+				viewInstalled.Filter = FilterByModName;
 			CollectionView viewOnline = (CollectionView)CollectionViewSource.GetDefaultView(OnlineModListControl.ItemsSource);
+			if (!(viewOnline is null))
 			viewOnline.Filter = FilterByModName;
 		}
 
@@ -120,20 +124,40 @@ namespace Subnautica_Mod_Manager
 			}
 			else if (modsToShow == ModsToShow.ShowLatest)
 			{
-				HttpResponseMessage response = httpClient.GetAsync("mods/latest_added.json").Result;
-				List<Mod.DownloadedModData> downloadedModData = JsonSerializer.Deserialize<List<Mod.DownloadedModData>>(response.Content.ReadAsStringAsync().Result);
-				foreach (Mod.DownloadedModData item in downloadedModData)
+				try
 				{
-					mods.Add(new Mod(item, httpClient));
+					string response = httpClient.GetStringAsync("mods/latest_added.json").Result;
+					List<Mod.DownloadedModData> downloadedModData = JsonSerializer.Deserialize<List<Mod.DownloadedModData>>(response);
+					foreach (Mod.DownloadedModData item in downloadedModData)
+					{
+						mods.Add(new Mod(item, httpClient));
+					}
+				}
+				catch (AggregateException e)
+				{
+					if (e.InnerException is HttpRequestException)
+					{
+						return null;
+					}
 				}
 			}
 			else if (modsToShow == ModsToShow.ShowPopular)
 			{
-				HttpResponseMessage response = httpClient.GetAsync("mods/trending.json").Result;
-				List<Mod.DownloadedModData> downloadedModData = JsonSerializer.Deserialize<List<Mod.DownloadedModData>>(response.Content.ReadAsStringAsync().Result);
-				foreach (Mod.DownloadedModData item in downloadedModData)
+				try
 				{
-					mods.Add(new Mod(item, httpClient));
+					string response = httpClient.GetStringAsync("mods/trending.json").Result;
+					List<Mod.DownloadedModData> downloadedModData = JsonSerializer.Deserialize<List<Mod.DownloadedModData>>(response);
+					foreach (Mod.DownloadedModData item in downloadedModData)
+					{
+						mods.Add(new Mod(item, httpClient));
+					}
+				}
+				catch (AggregateException e)
+				{
+					if (e.InnerException is HttpRequestException)
+					{
+						return null;
+					}
 				}
 			}
 

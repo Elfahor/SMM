@@ -3,7 +3,7 @@
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <RootNamespace>Subnautica_Mod_Manager</RootNamespace>
+    <RootNamespace>SubnauticaModManager</RootNamespace>
     <UseWPF>true</UseWPF>
     <SignAssembly>false</SignAssembly>
     <ApplicationIcon>icon.ico</ApplicationIcon>

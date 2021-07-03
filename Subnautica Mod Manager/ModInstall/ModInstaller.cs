@@ -1,10 +1,10 @@
 ﻿using Microsoft.VisualBasic.FileIO;
-using Subnautica_Mod_Manager.CommonUtils;
+using SubnauticaModManager.CommonUtils;
 using System.IO;
 using System.Linq;
 using System.Windows;
 
-namespace Subnautica_Mod_Manager
+namespace SubnauticaModManager
 {
 	internal class ModInstaller
 	{

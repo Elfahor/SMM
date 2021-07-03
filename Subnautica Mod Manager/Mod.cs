@@ -4,7 +4,7 @@ using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace Subnautica_Mod_Manager
+namespace SubnauticaModManager
 {
 	public class Mod
 	{

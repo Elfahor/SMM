@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Subnautica_Mod_Manager.Properties {
+namespace SubnauticaModManager.Properties {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
@@ -23,21 +23,24 @@ namespace Subnautica_Mod_Manager.Properties {
             }
         }
         
-        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("D:\\Programmes\\steamapps\\common\\Subnautica")]
         public string GamePath {
             get {
                 return ((string)(this["GamePath"]));
             }
-            set {
+            set
+            {
                 this["GamePath"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        [global::System.Configuration.DefaultSettingValueAttribute("\r\nc1Brb0Vxck51a0c1bU5KRGxHbGg5RkFCRHBSYXlEWGdNanpNU3ZnbEdPMWRQc201YVRvS1ZGSU8yWEl" +
+            "mTWNuNi0tR05CN0ZMRHJBNUlrL1ZGdWZsUjhsdz09--febdeecd49139282d0b653bebd72120eebcf7" +
+            "c7e\r\n")]
         public string NexusApiKey {
             get {
                 return ((string)(this["NexusApiKey"]));
