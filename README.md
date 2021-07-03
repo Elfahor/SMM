@@ -17,8 +17,10 @@ Roadmap
        - [x] Installation of normal mods
        - [x] Installation of CustomCraft mods
        - [x] Installation of CustomPoster mods
-       - [ ] Installation of CustomBattery mods
+       - [x] Installation of CustomBattery mods
        - [x] Installation of CustomHullPlates mods
+       - [ ] Installation of CYS
+   - [ ] Plugin management (CC2, etc.)
    - [ ] Code cleaning
    - [ ] Interface cleaning
    - [ ] bug fixes
