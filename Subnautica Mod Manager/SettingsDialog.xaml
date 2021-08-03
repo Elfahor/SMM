@@ -13,9 +13,9 @@
                 <ColumnDefinition/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
-                <RowDefinition Height="20"/>
-                <RowDefinition Height="20"/>
-                <RowDefinition Height="20"/>
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="40"/>
+                <RowDefinition Height="40"/>
             </Grid.RowDefinitions>
             <TextBlock Grid.Row="0" Grid.Column="0">Game Path</TextBlock>
             <TextBox Name="GamePathTextBox" Grid.Row="0" Grid.Column="1">D:\Programmes\steamapps\common\Subnautica</TextBox>

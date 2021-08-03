@@ -4,7 +4,7 @@ using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace SubnauticaModManager
+namespace SubnauticaModManager.NexusMods
 {
 	public class Mod
 	{
@@ -70,7 +70,7 @@ namespace SubnauticaModManager
 			return Name;
 		}
 
-		internal void ApplyModJson()
+		public void ApplyModJson()
 		{
 			string newContent = JsonSerializer.Serialize(ModJson, JsonSerializerOptions);
 			File.WriteAllText(ModJsonPath, newContent);

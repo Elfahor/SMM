@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Linq;
 
 namespace SubnauticaModManager.CommonUtils
 {
-	static class StrUtil
+	internal static class StrUtil
 	{
 		public enum StrContainsOptions
 		{
@@ -14,9 +11,13 @@ namespace SubnauticaModManager.CommonUtils
 		public static bool Contains(this string str, string[] values, StrContainsOptions options)
 		{
 			if (options == StrContainsOptions.And)
+			{
 				return values.All((v) => str.Contains(v));
+			}
 			else
+			{
 				return values.Any((v) => str.Contains(v));
+			}
 		}
 	}
 }

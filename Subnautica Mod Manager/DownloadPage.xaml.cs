@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualBasic.FileIO; // bad
+using SubnauticaModManager.NexusMods;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -39,7 +40,7 @@ namespace SubnauticaModManager
 				{
 					case ".zip":
 					case ".7z":
-						ModInstaller.HandleZipQMod(fullPath);
+						NexusMods.ModInstaller.HandleZipQMod(fullPath);
 						break;
 					case ".exe":
 						Process.Start(new ProcessStartInfo(fullPath));

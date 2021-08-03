@@ -11,20 +11,22 @@ namespace SubnauticaModManager
 		{
 			InitializeComponent();
 
-			Properties.Settings.Default.Reload();
-			GamePathTextBox.Text = Properties.Settings.Default.GamePath;
-			NexusAPIKeyBox.Password = Properties.Settings.Default.NexusApiKey;
-			SaveApiKeyCheckBox.IsChecked = Properties.Settings.Default.SaveApiKey;
+			NexusMods.Settings.LoadFromFile();
+
+			GamePathTextBox.Text = NexusMods.Settings.Default.GamePath;
+			NexusAPIKeyBox.Password = NexusMods.Settings.Default.NexusApiKey;
+			SaveApiKeyCheckBox.IsChecked = NexusMods.Settings.Default.SaveApiKey;
 
 			Closed += (sender, e) =>
 			{
-				Properties.Settings.Default.GamePath = GamePathTextBox.Text;
-				Properties.Settings.Default.SaveApiKey = (bool)SaveApiKeyCheckBox.IsChecked;
-				if (Properties.Settings.Default.SaveApiKey)
+				NexusMods.Settings.Default.GamePath = GamePathTextBox.Text;
+				NexusMods.Settings.Default.SaveApiKey = (bool)SaveApiKeyCheckBox.IsChecked;
+				if (NexusMods.Settings.Default.SaveApiKey)
 				{
-					Properties.Settings.Default.NexusApiKey = NexusAPIKeyBox.Password;
+					NexusMods.Settings.Default.NexusApiKey = NexusAPIKeyBox.Password;
 				}
-				Properties.Settings.Default.Save();
+				NexusMods.Settings.SaveToFile();
+				NexusMods.NexusAPIProvider.UpdateRequestHeaders();
 			};
 
 			OpenNexusApiInfoBtn.Click += OpenNexusApiInfoBtn_Click;

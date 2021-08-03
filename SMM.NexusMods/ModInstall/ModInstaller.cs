@@ -1,12 +1,13 @@
 ﻿using Microsoft.VisualBasic.FileIO;
 using SubnauticaModManager.CommonUtils;
+using System;
 using System.IO;
 using System.Linq;
 using System.Windows;
 
-namespace SubnauticaModManager
+namespace SubnauticaModManager.NexusMods
 {
-	internal class ModInstaller
+	public class ModInstaller
 	{
 		private const string tmpPathName = "Subnautica Mod Manager";
 
@@ -243,7 +244,7 @@ namespace SubnauticaModManager
 
 		private static void InstallCC2(DirectoryInfo actualDirToCopy)
 		{
-			string cc2Path = Path.Combine(Properties.Settings.Default.GamePath, "QMods", "CustomCraft2SML");
+			string cc2Path = Path.Combine(Settings.Default.GamePath, "QMods", "CustomCraft2SML");
 			if (!Directory.Exists(cc2Path))
 			{
 				Issue("Please install CustomCraft2 beforehand");
@@ -277,7 +278,7 @@ namespace SubnauticaModManager
 
 		private static void InstallCustomHullPlates(DirectoryInfo actualDirToCopy)
 		{
-			string cpPath = Path.Combine(Properties.Settings.Default.GamePath, "QMods", "CustomHullPlates", "HullPlates");
+			string cpPath = Path.Combine(Settings.Default.GamePath, "QMods", "CustomHullPlates", "HullPlates");
 			if (!Directory.Exists(cpPath))
 			{
 				Issue("Please install CustomPosters beforehand");
@@ -296,7 +297,7 @@ namespace SubnauticaModManager
 		}
 		private static void InstallCustomPoster(DirectoryInfo actualDirToCopy)
 		{
-			string cpPath = Path.Combine(Properties.Settings.Default.GamePath, "QMods", "CustomPosters", "Posters");
+			string cpPath = Path.Combine(Settings.Default.GamePath, "QMods", "CustomPosters", "Posters");
 			if (!Directory.Exists(cpPath))
 			{
 				Issue("Please install CustomPosters beforehand");
@@ -315,7 +316,7 @@ namespace SubnauticaModManager
 		}
 		private static void InstallQMod(DirectoryInfo actualDirToCopy)
 		{
-			string destination = Path.Combine(Properties.Settings.Default.GamePath, "QMods", $"{actualDirToCopy.Name}");
+			string destination = Path.Combine(Settings.Default.GamePath, "QMods", $"{actualDirToCopy.Name}");
 			if (Directory.Exists(destination))
 			{
 				Directory.Delete(destination);
@@ -330,14 +331,15 @@ namespace SubnauticaModManager
 
 		private static void Issue(string message)
 		{
-			MessageBox.Show(
-				message,
-				"Unable to auto-install",
-				MessageBoxButton.OK,
-				MessageBoxImage.Warning,
-				MessageBoxResult.OK,
-				MessageBoxOptions.None
-			);
+			Console.WriteLine(message);
+			//MessageBox.Show(
+			//	message,
+			//	"Unable to auto-install",
+			//	MessageBoxButton.OK,
+			//	MessageBoxImage.Warning,
+			//	MessageBoxResult.OK,
+			//	MessageBoxOptions.None
+			//);
 		}
 	}
 }

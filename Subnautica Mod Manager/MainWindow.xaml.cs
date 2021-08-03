@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SubnauticaModManager.NexusMods;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -16,15 +17,16 @@ namespace SubnauticaModManager
 	/// </summary>
 	public partial class MainWindow : Window
 	{
+		[Obsolete("move to backend")]
 		private List<Mod> InstalledModList;
 		private List<Mod> LatestModList;
 		private List<Mod> PopularModList;
 
 		private ModsToShow modsShown;
 
-		private UserData UserData { get; }
+		private NexusMods.UserData UserData { get; }
 
-		public readonly HttpClient httpClient = new HttpClient();
+		public HttpClient HttpClient { get; } = new HttpClient();
 
 		public MainWindow()
 		{
@@ -35,16 +37,23 @@ namespace SubnauticaModManager
 			//SearchForLastVerBtn.Click += SearchForLastVerBtn_Click;
 			StartGameBtn.Click += StartGameBtn_Click;
 
-			Properties.Settings.Default.Reload();
-
-			httpClient.BaseAddress = new Uri("https://api.nexusmods.com/v1/games/subnautica/");
-			httpClient.DefaultRequestHeaders.Add("apikey", Properties.Settings.Default.NexusApiKey);
+			HttpClient.BaseAddress = new Uri("https://api.nexusmods.com/v1/games/subnautica/");
+			HttpClient.DefaultRequestHeaders.Add("apikey", NexusMods.Settings.Default.NexusApiKey);
 
 			InstalledModList = GetMods(ModsToShow.ShowInstalled);
-			LatestModList = GetMods(ModsToShow.ShowLatest);
-			PopularModList = GetMods(ModsToShow.ShowPopular);
+			
+			//LatestModList = GetMods(ModsToShow.ShowLatest);
+			//PopularModList = GetMods(ModsToShow.ShowPopular);
 
-			UserData = new UserData(httpClient);
+			try
+			{
+				UserData = NexusMods.UserData.GetOnline();
+			}
+			catch (AggregateException)
+			{
+				UserData = default;
+				Console.WriteLine("couldn't initialize userdata");
+			}
 
 			string[] listViewModes = Enum.GetNames(typeof(ModsToShow));
 			ShowWhatComboBox.ItemsSource = listViewModes;
@@ -99,20 +108,21 @@ namespace SubnauticaModManager
 		}
 
 		private bool DependenciesOk() =>
-			InstalledModList.All((m) =>
-				m.ModJson.Dependencies.All((d) =>
-					InstalledModList.Any((mc) => mc.ModJson.Id == d
+			InstalledModList.All(m =>
+				m.ModJson.Dependencies.All(d =>
+					InstalledModList.Any(mc => mc.ModJson.Id == d
 					)
 				)
 			);
 
+		[Obsolete("move to backend")]
 		public List<Mod> GetMods(ModsToShow modsToShow)
 		{
 			List<Mod> mods = new List<Mod>();
 
 			if (modsToShow == ModsToShow.ShowInstalled)
 			{
-				string[] installedMods = Directory.GetDirectories(Properties.Settings.Default.GamePath + "\\QMods", "*", SearchOption.TopDirectoryOnly);
+				string[] installedMods = Directory.GetDirectories(NexusMods.Settings.Default.GamePath + "\\QMods", "*", SearchOption.TopDirectoryOnly);
 
 				foreach (string mod in installedMods)
 				{
@@ -126,11 +136,11 @@ namespace SubnauticaModManager
 			{
 				try
 				{
-					string response = httpClient.GetStringAsync("mods/latest_added.json").Result;
+					string response = HttpClient.GetStringAsync("mods/latest_added.json").Result;
 					List<Mod.DownloadedModData> downloadedModData = JsonSerializer.Deserialize<List<Mod.DownloadedModData>>(response);
 					foreach (Mod.DownloadedModData item in downloadedModData)
 					{
-						mods.Add(new Mod(item, httpClient));
+						mods.Add(new Mod(item, HttpClient));
 					}
 				}
 				catch (AggregateException e)
@@ -145,11 +155,11 @@ namespace SubnauticaModManager
 			{
 				try
 				{
-					string response = httpClient.GetStringAsync("mods/trending.json").Result;
+					string response = HttpClient.GetStringAsync("mods/trending.json").Result;
 					List<Mod.DownloadedModData> downloadedModData = JsonSerializer.Deserialize<List<Mod.DownloadedModData>>(response);
 					foreach (Mod.DownloadedModData item in downloadedModData)
 					{
-						mods.Add(new Mod(item, httpClient));
+						mods.Add(new Mod(item, HttpClient));
 					}
 				}
 				catch (AggregateException e)
@@ -198,7 +208,7 @@ namespace SubnauticaModManager
 				return;
 			}
 			using Process game = new Process();
-			game.StartInfo.FileName = Path.Combine(Properties.Settings.Default.GamePath, "Subnautica.exe");
+			game.StartInfo.FileName = Path.Combine(NexusMods.Settings.Default.GamePath, "Subnautica.exe");
 			game.Start();
 		}
 
@@ -210,7 +220,7 @@ namespace SubnauticaModManager
 
 		private void StartDownloadOfMod(Mod mod)
 		{
-			if (UserData.is_premium)
+			if (UserData.IsPremium)
 			{
 				//handle premium mod download
 			}
@@ -250,8 +260,8 @@ namespace SubnauticaModManager
 
 		private void GetThisModBtn_Click(object sender, RoutedEventArgs e)
 		{
-			string modOnlineInfo = httpClient.GetStringAsync($"mods/{SearchArea.Text}.json").Result;
-			Mod mod = new Mod(JsonSerializer.Deserialize<Mod.DownloadedModData>(modOnlineInfo), httpClient);
+			string modOnlineInfo = HttpClient.GetStringAsync($"mods/{SearchArea.Text}.json").Result;
+			Mod mod = new Mod(JsonSerializer.Deserialize<Mod.DownloadedModData>(modOnlineInfo), HttpClient);
 			StartDownloadOfMod(mod);
 		}
 	}
