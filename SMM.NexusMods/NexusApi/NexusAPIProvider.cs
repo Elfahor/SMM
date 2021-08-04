@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 
-namespace SubnauticaModManager.NexusMods
+namespace SubnauticaModManager.NexusApi
 {
 	public static class NexusAPIProvider
 	{

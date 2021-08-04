@@ -3,7 +3,7 @@ using System.IO;
 using System.Reflection;
 using System.Runtime.Serialization.Formatters.Binary;
 
-namespace SubnauticaModManager.NexusMods
+namespace SubnauticaModManager.NexusApi
 {
 	/// <summary>
 	/// User configuration
@@ -11,10 +11,9 @@ namespace SubnauticaModManager.NexusMods
 	[Serializable]
 	public class Settings
 	{
-		static readonly string s_pathToSave = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "cfg");
-		static readonly BinaryFormatter s_formatter = new BinaryFormatter();
-
-		static Settings s_main;
+		private static readonly string s_pathToSave = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "cfg");
+		private static readonly BinaryFormatter s_formatter = new BinaryFormatter();
+		private static Settings s_main;
 		/// <summary>
 		/// Singleton pattern
 		/// </summary>
@@ -28,17 +27,24 @@ namespace SubnauticaModManager.NexusMods
 
 		public static void SaveToFile()
 		{
-			using (var f = File.Open(s_pathToSave, FileMode.Create))
-			{
-				s_formatter.Serialize(f, s_main);
-			}
+			using FileStream f = File.Open(s_pathToSave, FileMode.Create);
+			s_formatter.Serialize(f, s_main);
 		}
 
 		public static void LoadFromFile()
 		{
-			using (var f = File.Open(s_pathToSave, FileMode.Open))
+			try
 			{
+				using FileStream f = File.Open(s_pathToSave, FileMode.Open);
 				s_main = s_formatter.Deserialize(f) as Settings;
+			}
+			catch (System.Runtime.Serialization.SerializationException)
+			{
+				s_main = default;
+			}
+			catch (FileNotFoundException)
+			{
+				s_main = default;
 			}
 		}
 	}

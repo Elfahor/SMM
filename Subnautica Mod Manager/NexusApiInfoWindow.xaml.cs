@@ -1,14 +1,14 @@
 ﻿using System.Diagnostics;
 using System.Windows;
 
-namespace SubnauticaModManager
+namespace SubnauticaModManager.Wpf
 {
 	/// <summary>
 	/// Logique d'interaction pour NexusApiInfo.xaml
 	/// </summary>
-	public partial class NexusApiInfo : Window
+	public partial class NexusApiInfoWindow : Window
 	{
-		public NexusApiInfo()
+		public NexusApiInfoWindow()
 		{
 			InitializeComponent();
 

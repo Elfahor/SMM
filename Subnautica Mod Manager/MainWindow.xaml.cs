@@ -1,4 +1,4 @@
-﻿using SubnauticaModManager.NexusMods;
+﻿using SubnauticaModManager.NexusApi;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -10,44 +10,40 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 
-namespace SubnauticaModManager
+namespace SubnauticaModManager.Wpf
 {
 	/// <summary>
 	/// Interaction logic for MainWindow.xaml
 	/// </summary>
 	public partial class MainWindow : Window
 	{
-		[Obsolete("move to backend")]
 		private List<Mod> InstalledModList;
 		private List<Mod> LatestModList;
 		private List<Mod> PopularModList;
 
 		private ModsToShow modsShown;
 
-		private NexusMods.UserData UserData { get; }
-
-		public HttpClient HttpClient { get; } = new HttpClient();
+		private UserData UserData { get; }
 
 		public MainWindow()
 		{
 			InitializeComponent();
+
+			Settings.LoadFromFile();
+			NexusAPIProvider.UpdateRequestHeaders();
 
 			OpenSettingsBtn.Click += OpenSettingsBtn_Click;
 			ApplyModifsBtn.Click += ApplyModifsBtn_Click;
 			//SearchForLastVerBtn.Click += SearchForLastVerBtn_Click;
 			StartGameBtn.Click += StartGameBtn_Click;
 
-			HttpClient.BaseAddress = new Uri("https://api.nexusmods.com/v1/games/subnautica/");
-			HttpClient.DefaultRequestHeaders.Add("apikey", NexusMods.Settings.Default.NexusApiKey);
-
-			InstalledModList = GetMods(ModsToShow.ShowInstalled);
-			
-			//LatestModList = GetMods(ModsToShow.ShowLatest);
-			//PopularModList = GetMods(ModsToShow.ShowPopular);
+			InstalledModList = GetMods(ModsToShow.ShowInstalled);			
+			LatestModList = GetMods(ModsToShow.ShowLatest);
+			PopularModList = GetMods(ModsToShow.ShowPopular);
 
 			try
 			{
-				UserData = NexusMods.UserData.GetOnline();
+				UserData = UserData.GetOnline();
 			}
 			catch (AggregateException)
 			{
@@ -122,7 +118,7 @@ namespace SubnauticaModManager
 
 			if (modsToShow == ModsToShow.ShowInstalled)
 			{
-				string[] installedMods = Directory.GetDirectories(NexusMods.Settings.Default.GamePath + "\\QMods", "*", SearchOption.TopDirectoryOnly);
+				string[] installedMods = Directory.GetDirectories(Settings.Default.GamePath + "\\QMods", "*", SearchOption.TopDirectoryOnly);
 
 				foreach (string mod in installedMods)
 				{
@@ -136,11 +132,11 @@ namespace SubnauticaModManager
 			{
 				try
 				{
-					string response = HttpClient.GetStringAsync("mods/latest_added.json").Result;
+					string response = NexusAPIProvider.NexusHttpClient.GetStringAsync("mods/latest_added.json").Result;
 					List<Mod.DownloadedModData> downloadedModData = JsonSerializer.Deserialize<List<Mod.DownloadedModData>>(response);
 					foreach (Mod.DownloadedModData item in downloadedModData)
 					{
-						mods.Add(new Mod(item, HttpClient));
+						mods.Add(new Mod(item, NexusAPIProvider.NexusHttpClient));
 					}
 				}
 				catch (AggregateException e)
@@ -155,11 +151,11 @@ namespace SubnauticaModManager
 			{
 				try
 				{
-					string response = HttpClient.GetStringAsync("mods/trending.json").Result;
+					string response = NexusAPIProvider.NexusHttpClient.GetStringAsync("mods/trending.json").Result;
 					List<Mod.DownloadedModData> downloadedModData = JsonSerializer.Deserialize<List<Mod.DownloadedModData>>(response);
 					foreach (Mod.DownloadedModData item in downloadedModData)
 					{
-						mods.Add(new Mod(item, HttpClient));
+						mods.Add(new Mod(item, NexusAPIProvider.NexusHttpClient));
 					}
 				}
 				catch (AggregateException e)
@@ -192,6 +188,7 @@ namespace SubnauticaModManager
 			settingsDialog.ShowDialog();
 		}
 
+		// move to backend
 		private void SearchForLastVerBtn_Click(object sender, RoutedEventArgs e)
 		{
 			foreach (Mod mod in InstalledModList)
@@ -208,7 +205,7 @@ namespace SubnauticaModManager
 				return;
 			}
 			using Process game = new Process();
-			game.StartInfo.FileName = Path.Combine(NexusMods.Settings.Default.GamePath, "Subnautica.exe");
+			game.StartInfo.FileName = Path.Combine(NexusApi.Settings.Default.GamePath, "Subnautica.exe");
 			game.Start();
 		}
 
@@ -260,8 +257,8 @@ namespace SubnauticaModManager
 
 		private void GetThisModBtn_Click(object sender, RoutedEventArgs e)
 		{
-			string modOnlineInfo = HttpClient.GetStringAsync($"mods/{SearchArea.Text}.json").Result;
-			Mod mod = new Mod(JsonSerializer.Deserialize<Mod.DownloadedModData>(modOnlineInfo), HttpClient);
+			string modOnlineInfo = NexusAPIProvider.NexusHttpClient.GetStringAsync($"mods/{SearchArea.Text}.json").Result;
+			Mod mod = new Mod(JsonSerializer.Deserialize<Mod.DownloadedModData>(modOnlineInfo), NexusAPIProvider.NexusHttpClient);
 			StartDownloadOfMod(mod);
 		}
 	}

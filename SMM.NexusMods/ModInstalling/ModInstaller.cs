@@ -1,17 +1,84 @@
 ﻿using Microsoft.VisualBasic.FileIO;
 using SubnauticaModManager.CommonUtils;
+using SubnauticaModManager.NexusApi;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Windows;
+using System.Text;
+using System.Text.RegularExpressions;
 
-namespace SubnauticaModManager.NexusMods
+namespace SubnauticaModManager.ModInstalling
 {
+	/// <summary>
+	/// Handles the installation process of mods that have already been downloaded.
+	/// </summary>
 	public class ModInstaller
 	{
 		private const string tmpPathName = "Subnautica Mod Manager";
 
-		public static void HandleZipQMod(string downloadedArchivePath)
+		/// <summary>
+		/// Extracts and correctly places the mod
+		/// </summary>
+		/// <param name="mod">Mod to install based on its metadata</param>
+		public static void Install(Mod mod)
+		{
+			string fullPath = GetPathAtWhichModWasDownloaded(mod);
+			string fileExtension = Path.GetExtension(fullPath);
+
+			switch (fileExtension)
+			{
+				case ".zip":
+				case ".7z":
+					InstallDownloadedMod(fullPath);
+					break;
+				case ".exe":
+					Process.Start(new ProcessStartInfo(fullPath));
+					break;
+				default:
+					Issue("This mod cannot be automatically installed. Please refer to its installation instructions");
+					break;
+			}
+		}
+
+		/// <summary>
+		/// Gets the path at which a mod has been downloaded from the browser.
+		/// </summary>
+		/// <param name="mod">the mod</param>
+		/// <returns>the path</returns>
+		private static string GetPathAtWhichModWasDownloaded(Mod mod)
+		{
+			string url = GetUrl(mod);
+			// use a regex to extract file name
+			Regex pattern = new Regex(@"^https://file-metadata\.nexusmods\.com/file/nexus-files-s3-meta/1155/[0-9]{1,3}/(?<filename>[\w\._\s-]*)");
+			Match match = pattern.Match(url);
+			StringBuilder fileName = new StringBuilder(match.Groups["filename"].Value);
+			fileName.Replace(".json", "");
+			string fullPath = Path.Combine(FileUtils.GetDownloadPath(), fileName.ToString());
+			return fullPath;
+		}
+		/// <summary>
+		/// Get the nexus download URL for the main release
+		/// </summary>
+		/// <param name="mod"></param>
+		/// <returns></returns>
+		private static string GetUrl(Mod mod)
+		{
+			Mod.FileInfo.File[] files = mod.Files.files;
+			for (int i = files.Length - 1; i >= 0; --i)
+			{
+				if (files[i].category_id == 1)
+				{
+					return files[i].content_preview_link;
+				}
+			}
+			throw new ArgumentException("This mod has no MAIN release");
+		}
+
+		/// <summary>
+		/// Once the mod has been downloaded, we can start extracting and copying files
+		/// </summary>
+		private static void InstallDownloadedMod(string downloadedArchivePath)
 		{
 			string tmpPathForExtraction = Path.Combine(Path.GetTempPath(), tmpPathName, Path.GetFileName(downloadedArchivePath));
 			if (Directory.Exists(tmpPathForExtraction))

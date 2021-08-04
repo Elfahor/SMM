@@ -3,7 +3,7 @@
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <RootNamespace>SubnauticaModManager</RootNamespace>
+    <RootNamespace>SubnauticaModManager.Wpf</RootNamespace>
     <UseWPF>true</UseWPF>
     <SignAssembly>false</SignAssembly>
     <ApplicationIcon>icon.ico</ApplicationIcon>
@@ -21,7 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SMM.NexusMods\SMM.NexusMods.csproj" />
+    <ProjectReference Include="..\SMM.NexusMods\SubnauticaModManager.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30611.23
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SubnauticaModManager", "Subnautica Mod Manager\SubnauticaModManager.csproj", "{9DF7B8D0-450D-405A-9CCF-42113E2A2184}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SubnauticaModManager.Wpf", "Subnautica Mod Manager\SubnauticaModManager.Wpf.csproj", "{9DF7B8D0-450D-405A-9CCF-42113E2A2184}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SMM.NexusMods", "SMM.NexusMods\SMM.NexusMods.csproj", "{F3B2D839-3B9A-4D53-BEA1-D98FA85FBC64}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SubnauticaModManager", "SMM.NexusMods\SubnauticaModManager.csproj", "{F3B2D839-3B9A-4D53-BEA1-D98FA85FBC64}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
