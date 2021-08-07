@@ -238,14 +238,14 @@ namespace SubnauticaModManager.Wpf
 
 		private bool FilterByModName(object item)
 		{
-			if (String.IsNullOrEmpty(SearchArea.Text))
+			if (string.IsNullOrEmpty(SearchArea.Text))
 			{
 				return true;
 			}
 			else
 			{
-				string toSearch = modsShown == ModsToShow.ShowInstalled ? (item as Mod).ModJson.DisplayName : (item as Mod).OnlineInfo.name;
-				return toSearch.IndexOf(SearchArea.Text, StringComparison.OrdinalIgnoreCase) >= 0;
+				string toSearch = modsShown == ModsToShow.ShowInstalled ? (item as Mod).ModJson.DisplayName : (item as Mod).OnlineInfo.Name;
+				return !string.IsNullOrEmpty(toSearch) && toSearch.IndexOf(SearchArea.Text, StringComparison.OrdinalIgnoreCase) >= 0;
 			}
 		}
 

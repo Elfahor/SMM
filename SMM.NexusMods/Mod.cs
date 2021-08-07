@@ -2,6 +2,7 @@
 using System.IO;
 using System.Net.Http;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace SubnauticaModManager
@@ -36,12 +37,12 @@ namespace SubnauticaModManager
 		public Mod(DownloadedModData onlineInfo, HttpClient httpClient)
 		{
 			OnlineInfo = onlineInfo;
-			Name = OnlineInfo.name;
-			LastVersion = onlineInfo.version;
+			Name = OnlineInfo.Name;
+			LastVersion = onlineInfo.Version;
 
-			if (onlineInfo.available && onlineInfo.status != "hidden")
+			if (onlineInfo.AvailableOnSite && onlineInfo.Status != "hidden")
 			{
-				Task<string> responseTask = httpClient.GetStringAsync($"mods/{OnlineInfo.mod_id}/files.json");
+				Task<string> responseTask = httpClient.GetStringAsync($"mods/{OnlineInfo.ModId}/files.json");
 				string response = responseTask.Result;
 				Files = JsonSerializer.Deserialize<FileInfo>(response);
 			}
@@ -92,31 +93,88 @@ namespace SubnauticaModManager
 
 		public class DownloadedModData
 		{
-			public bool allow_rating { get; set; }
-			public string author { get; set; }
-			public bool available { get; set; }
-			public int category_id { get; set; }
-			public bool contains_adult_content { get; set; }
-			public DateTime created_time { get; set; }
-			public int created_timestamp { get; set; }
-			public string description { get; set; }
-			public string domain_name { get; set; }
-			public object endorsement { get; set; }
-			public int endorsement_count { get; set; }
-			public int game_id { get; set; }
-			public int mod_id { get; set; }
-			public string name { get; set; }
-			public string picture_url { get; set; }
-			public string status { get; set; }
-			public string summary { get; set; }
-			public long uid { get; set; }
-			public DateTime updated_time { get; set; }
-			public int updated_timestamp { get; set; }
-			public string uploaded_by { get; set; }
-			public string uploaded_users_profile_url { get; set; }
-			public User user { get; set; }
-			public string version { get; set; }
-			public class User
+			[JsonPropertyName("allow_rating")]
+			public bool AllowRating { get; set; }
+			[JsonPropertyName("author")]
+			public string AuthorName { get; set; }
+			[JsonPropertyName("available")]
+			public bool AvailableOnSite { get; set; }
+			/// <summary>
+			/// 1: MAIN release
+			/// </summary>
+			[JsonPropertyName("category_id")]
+			public int Category { get; set; }
+			[JsonPropertyName("contains_adult_content")]
+			public bool ContainsAdultContent { get; set; }
+			/// <summary>
+			/// Time at which the mod has been uploaded
+			/// </summary>
+			[JsonPropertyName("created_time")]
+			public DateTime CreationTime { get; set; }
+			[JsonPropertyName("created_timestamp")]
+			public int CreationTimestamp { get; set; }
+			/// <summary>
+			/// A long BB-Code description
+			/// </summary>
+			[JsonPropertyName("description")]
+			public string Description { get; set; }
+			[JsonPropertyName("domain_name")]
+			public string GameModIsFor { get; set; }
+			[JsonPropertyName("endorsement")]
+			public object EndorsementDetails { get; set; }
+			[JsonPropertyName("endorsement_count")]
+			public int EndorsementCount { get; set; }
+			/// <summary>
+			/// Id for the game this mod is for
+			/// </summary>
+			[JsonPropertyName("game_id")]
+			public int GameId { get; set; }
+			/// <summary>
+			/// Id for the mod
+			/// </summary>
+			[JsonPropertyName("mod_id")]
+			public int ModId { get; set; }
+			[JsonPropertyName("name")]
+			public string Name { get; set; }
+			/// <summary>
+			/// Url for the banner this mod has on the Nexus website
+			/// </summary>
+			[JsonPropertyName("picture_url")]
+			public string PictureUrl { get; set; }
+			/// <summary>
+			/// published, etc...
+			/// </summary>
+			[JsonPropertyName("status")]
+			public string Status { get; set; }
+			/// <summary>
+			/// A short plain text description
+			/// </summary>
+			[JsonPropertyName("summary")]
+			public string Summary { get; set; }
+			/// <summary>
+			/// Unique identifier for the mod we don't care about
+			/// </summary>
+			[JsonPropertyName("uid")]
+			public long Uid { get; set; }
+			/// <summary>
+			/// Last time the mod was updated
+			/// </summary>
+			[JsonPropertyName("updated_time")]
+			public DateTime UpdatedTime { get; set; }
+			[JsonPropertyName("updated_timestamp")]
+			public int UpdatedTimestamp { get; set; }
+			/// <summary>
+			/// The user who uploaded the mod, might not be the author. <br/>Ex with QMod: author = QMod Team, uploader = PrimeSonic
+			/// </summary>
+			[JsonPropertyName("uploaded_by")]
+			public string Uploader { get; set; }
+			[JsonPropertyName("uploaded_users_profile_url")]
+			public string UploaderProfileUrl { get; set; }
+			[JsonPropertyName("user")]
+			public UploadUser UploaderDetails { get; set; }
+			[JsonPropertyName("version")]
+			public string Version { get; set; }
+			public class UploadUser
 			{
 				public int member_group_id { get; set; }
 				public int member_id { get; set; }
@@ -163,15 +221,16 @@ namespace SubnauticaModManager
 			public string Game { get; set; }
 			public string Id { get; set; }
 			public string[] LoadBefore { get; set; }
-			public Nexusid NexusId { get; set; }
+			public NexusIdDetails NexusId { get; set; }
 			public string Version { get; set; }
-			public Versionchecker VersionChecker { get; set; }
-			public struct Nexusid
+			public VersionCheckerDetails VersionChecker { get; set; }
+			public struct NexusIdDetails
 			{
 				public string Subnautica { get; set; }
+				public string BelowZero { get; set; }
 			}
 
-			public struct Versionchecker
+			public struct VersionCheckerDetails
 			{
 				public string LatestVersionURL { get; set; }
 			}
