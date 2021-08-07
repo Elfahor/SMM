@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <AssemblyName>SubnauticaModManager.Mods</AssemblyName>
+    <RootNamespace>SubnauticaModManager</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="SharpCompress" Version="0.28.3" />
+  </ItemGroup>
+
+</Project>

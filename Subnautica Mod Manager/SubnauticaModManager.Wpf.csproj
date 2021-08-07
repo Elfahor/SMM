@@ -3,10 +3,11 @@
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <RootNamespace>SubnauticaModManager</RootNamespace>
+    <RootNamespace>SubnauticaModManager.Wpf</RootNamespace>
     <UseWPF>true</UseWPF>
     <SignAssembly>false</SignAssembly>
     <ApplicationIcon>icon.ico</ApplicationIcon>
+    <Configurations>Debug;Release;Release-Unix</Configurations>
   </PropertyGroup>
 
   <ItemGroup>
@@ -15,7 +16,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="ModernWpfUI" Version="0.9.4" />
     <PackageReference Include="Syroot.Windows.IO.KnownFolders" Version="1.2.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SMM.NexusMods\SubnauticaModManager.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -28,14 +34,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Properties\Settings.Designer.cs">
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Settings.settings</DependentUpon>
-    </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
     <None Update="7za.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -44,10 +42,6 @@
     </None>
     <None Update="7zxa.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>
 

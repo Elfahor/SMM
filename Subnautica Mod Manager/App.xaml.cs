@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace SubnauticaModManager
+namespace SubnauticaModManager.Wpf
 {
 	/// <summary>
 	/// Interaction logic for App.xaml

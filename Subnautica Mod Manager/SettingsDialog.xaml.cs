@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace SubnauticaModManager
+namespace SubnauticaModManager.Wpf
 {
 	/// <summary>
 	/// Logique d'interaction pour SettingsDialog.xaml
@@ -11,20 +11,22 @@ namespace SubnauticaModManager
 		{
 			InitializeComponent();
 
-			Properties.Settings.Default.Reload();
-			GamePathTextBox.Text = Properties.Settings.Default.GamePath;
-			NexusAPIKeyBox.Password = Properties.Settings.Default.NexusApiKey;
-			SaveApiKeyCheckBox.IsChecked = Properties.Settings.Default.SaveApiKey;
+			Settings.LoadFromFile();
+
+			GamePathTextBox.Text = Settings.Default.GamePath;
+			NexusAPIKeyBox.Password = Settings.Default.NexusApiKey;
+			SaveApiKeyCheckBox.IsChecked = Settings.Default.SaveApiKey;
 
 			Closed += (sender, e) =>
 			{
-				Properties.Settings.Default.GamePath = GamePathTextBox.Text;
-				Properties.Settings.Default.SaveApiKey = (bool)SaveApiKeyCheckBox.IsChecked;
-				if (Properties.Settings.Default.SaveApiKey)
+				Settings.Default.GamePath = GamePathTextBox.Text;
+				Settings.Default.SaveApiKey = (bool)SaveApiKeyCheckBox.IsChecked;
+				if (Settings.Default.SaveApiKey)
 				{
-					Properties.Settings.Default.NexusApiKey = NexusAPIKeyBox.Password;
+					Settings.Default.NexusApiKey = NexusAPIKeyBox.Password;
 				}
-				Properties.Settings.Default.Save();
+				Settings.SaveToFile();
+				NexusApi.NexusAPIProvider.UpdateRequestHeaders();
 			};
 
 			OpenNexusApiInfoBtn.Click += OpenNexusApiInfoBtn_Click;
@@ -32,7 +34,7 @@ namespace SubnauticaModManager
 
 		private void OpenNexusApiInfoBtn_Click(object sender, RoutedEventArgs e)
 		{
-			NexusApiInfo info = new NexusApiInfo()
+			NexusApiInfoWindow info = new NexusApiInfoWindow()
 			{
 				Owner = this,
 				DataContext = this.DataContext

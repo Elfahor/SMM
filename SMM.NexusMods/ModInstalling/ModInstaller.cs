@@ -1,16 +1,85 @@
 ﻿using Microsoft.VisualBasic.FileIO;
 using SubnauticaModManager.CommonUtils;
+using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Windows;
+using System.Text;
+using System.Text.RegularExpressions;
 
-namespace SubnauticaModManager
+namespace SubnauticaModManager.ModInstalling
 {
-	internal class ModInstaller
+	/// <summary>
+	/// Handles the installation process of mods that have already been downloaded.
+	/// </summary>
+	public class ModInstaller
 	{
 		private const string tmpPathName = "Subnautica Mod Manager";
 
-		public static void HandleZipQMod(string downloadedArchivePath)
+		/// <summary>
+		/// Extracts and correctly places the mod
+		/// </summary>
+		/// <param name="mod">Mod to install based on its metadata</param>
+		public static void Install(Mod mod)
+		{
+			string fullPath = GetPathAtWhichModWasDownloaded(mod);
+			string fileExtension = Path.GetExtension(fullPath);
+
+			switch (fileExtension)
+			{
+				case ".zip":
+				case ".7z":
+				case ".rar":
+					InstallDownloadedMod(fullPath);
+					break;
+				case ".exe":
+					Process.Start(new ProcessStartInfo(fullPath));
+					break;
+				default:
+					Issue("This mod cannot be automatically installed. Please refer to its installation instructions");
+					break;
+			}
+		}
+
+		/// <summary>
+		/// Gets the path at which a mod has been downloaded from the browser.
+		/// </summary>
+		/// <param name="mod">the mod</param>
+		/// <returns>the path</returns>
+		private static string GetPathAtWhichModWasDownloaded(Mod mod)
+		{
+			string url = GetUrl(mod);
+			// use a regex to extract file name
+			Regex pattern = new Regex(@"^https://file-metadata\.nexusmods\.com/file/nexus-files-s3-meta/1155/[0-9]{1,3}/(?<filename>[\w\._\s-]*)");
+			Match match = pattern.Match(url);
+			StringBuilder fileName = new StringBuilder(match.Groups["filename"].Value);
+			fileName.Replace(".json", "");
+			string fullPath = Path.Combine(FileUtils.GetDownloadPath(), fileName.ToString());
+			return fullPath;
+		}
+		/// <summary>
+		/// Get the nexus download URL for the main release
+		/// </summary>
+		/// <param name="mod"></param>
+		/// <returns></returns>
+		private static string GetUrl(Mod mod)
+		{
+			return mod.GetLatestMainRelease().content_preview_link;
+			//Mod.NexusFilePreviewInfos.FilePreviewMetadata[] files = mod.FilePreview.Files;
+			//for (int i = files.Length - 1; i >= 0; --i)
+			//{
+			//	if (files[i].CategoryId == 1)
+			//	{
+			//		return files[i].content_preview_link;
+			//	}
+			//}
+			//throw new ArgumentException("This mod has no MAIN release");
+		}
+
+		/// <summary>
+		/// Once the mod has been downloaded, we can start extracting and copying files
+		/// </summary>
+		private static void InstallDownloadedMod(string downloadedArchivePath)
 		{
 			string tmpPathForExtraction = Path.Combine(Path.GetTempPath(), tmpPathName, Path.GetFileName(downloadedArchivePath));
 			if (Directory.Exists(tmpPathForExtraction))
@@ -38,6 +107,7 @@ namespace SubnauticaModManager
 						if (actualDirToCopy is null) // not QMod
 						{
 							Issue("This mod cannot be automatically installed. Please refer to its installation instructions");
+							return;
 						}
 						else
 						{
@@ -243,7 +313,7 @@ namespace SubnauticaModManager
 
 		private static void InstallCC2(DirectoryInfo actualDirToCopy)
 		{
-			string cc2Path = Path.Combine(Properties.Settings.Default.GamePath, "QMods", "CustomCraft2SML");
+			string cc2Path = Path.Combine(Settings.Default.GamePath, "QMods", "CustomCraft2SML");
 			if (!Directory.Exists(cc2Path))
 			{
 				Issue("Please install CustomCraft2 beforehand");
@@ -277,7 +347,7 @@ namespace SubnauticaModManager
 
 		private static void InstallCustomHullPlates(DirectoryInfo actualDirToCopy)
 		{
-			string cpPath = Path.Combine(Properties.Settings.Default.GamePath, "QMods", "CustomHullPlates", "HullPlates");
+			string cpPath = Path.Combine(Settings.Default.GamePath, "QMods", "CustomHullPlates", "HullPlates");
 			if (!Directory.Exists(cpPath))
 			{
 				Issue("Please install CustomPosters beforehand");
@@ -296,7 +366,7 @@ namespace SubnauticaModManager
 		}
 		private static void InstallCustomPoster(DirectoryInfo actualDirToCopy)
 		{
-			string cpPath = Path.Combine(Properties.Settings.Default.GamePath, "QMods", "CustomPosters", "Posters");
+			string cpPath = Path.Combine(Settings.Default.GamePath, "QMods", "CustomPosters", "Posters");
 			if (!Directory.Exists(cpPath))
 			{
 				Issue("Please install CustomPosters beforehand");
@@ -315,7 +385,7 @@ namespace SubnauticaModManager
 		}
 		private static void InstallQMod(DirectoryInfo actualDirToCopy)
 		{
-			string destination = Path.Combine(Properties.Settings.Default.GamePath, "QMods", $"{actualDirToCopy.Name}");
+			string destination = Path.Combine(Settings.Default.GamePath, "QMods", $"{actualDirToCopy.Name}");
 			if (Directory.Exists(destination))
 			{
 				Directory.Delete(destination);
@@ -324,20 +394,21 @@ namespace SubnauticaModManager
 			// from Microsoft.VisualBasic. Bad.
 			if (!FileSystem.FileExists(destination))
 			{
-				FileSystem.MoveDirectory(actualDirToCopy.FullName, destination);
+				FileSystem.CopyDirectory(actualDirToCopy.FullName, destination);
 			}
 		}
 
 		private static void Issue(string message)
 		{
-			MessageBox.Show(
-				message,
-				"Unable to auto-install",
-				MessageBoxButton.OK,
-				MessageBoxImage.Warning,
-				MessageBoxResult.OK,
-				MessageBoxOptions.None
-			);
+			Console.WriteLine(message);
+			//MessageBox.Show(
+			//	message,
+			//	"Unable to auto-install",
+			//	MessageBoxButton.OK,
+			//	MessageBoxImage.Warning,
+			//	MessageBoxResult.OK,
+			//	MessageBoxOptions.None
+			//);
 		}
 	}
 }
