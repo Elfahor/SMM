@@ -1,4 +1,4 @@
-﻿//#define SHARP_COMPRESS
+﻿#define SHARP_COMPRESS
 
 using SharpCompress.Archives;
 using System;
@@ -45,22 +45,19 @@ namespace SubnauticaModManager.CommonUtils
 			archive.WriteToDirectory(to);
 		}
 
-		public static string GetDownloadPath()
+		public static string GetDownloadPath() => Environment.OSVersion.Platform switch
 		{
-			return Environment.OSVersion.Platform switch
-			{
-				PlatformID.Win32NT => GetDownloadPathWin32(),// use SHGetSpecialFolder from Shell32.dll
-				PlatformID.Unix => GetDownloadPathUnix(),// use XDG
-				_ => throw new NotImplementedException("Use Win32 funcs or XDG"),
-			};
-		}
+			PlatformID.Win32NT => GetDownloadPathWin32(),// use SHGetSpecialFolder from Shell32.dll
+			PlatformID.Unix => GetDownloadPathUnix(),// use XDG
+			_ => throw new NotImplementedException("Use Win32 funcs or XDG"),
+		};
 
 		private static string GetDownloadPathWin32()
 		{
 			return KnownFolders.GetPath(KnownFolder.Downloads);
 		}
 
-		[Obsolete("Crappy way to get the download folder...")]
+		[Obsolete("Use xdg-user-dirs instead")]
 		private static string GetDownloadPathUnix()
 		{
 			string basefolder = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);

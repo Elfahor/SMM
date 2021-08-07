@@ -22,8 +22,8 @@ namespace SubnauticaModManager.Wpf
 			DlBtn.Click += (sender, e) =>
 			{
 				// open the download page for the mod
-#warning change the way the file is chosen
-				Process.Start(new ProcessStartInfo($"https://www.nexusmods.com/subnautica/mods/{mod.OnlineInfo.ModId}?tab=files&file_id={mod.Files.files[^1].file_id}") { UseShellExecute = true });
+//#warning change the way the file is chosen
+				Process.Start(new ProcessStartInfo($"https://www.nexusmods.com/subnautica/mods/{mod.OnlineInfo.ModId}?tab=files&file_id={mod.GetLatestMainRelease().file_id}") { UseShellExecute = true });
 			};
 
 			DledBtn.Click += (sender, e) =>

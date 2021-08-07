@@ -5,7 +5,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Text.Json;
 
-namespace SubnauticaModManager.NexusApi
+namespace SubnauticaModManager
 {
 	/// <summary>
 	/// User configuration

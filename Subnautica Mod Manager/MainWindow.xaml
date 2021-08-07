@@ -61,8 +61,8 @@
             <ListView.ItemTemplate>
                 <DataTemplate>
                     <Grid>
-                        <Image Source="{Binding OnlineInfo.picture_url}"/>
-                        <TextBlock Text="{Binding OnlineInfo.name}" VerticalAlignment="Bottom" HorizontalAlignment="Left" Foreground="White" FontWeight="Bold" FontSize="16"/>
+                        <Image Source="{Binding OnlineInfo.PictureUrl}"/>
+                        <TextBlock Text="{Binding OnlineInfo.Name}" VerticalAlignment="Bottom" HorizontalAlignment="Left" Foreground="White" FontWeight="Bold" FontSize="16"/>
                         <Button Name="DownloadBtn" VerticalAlignment="Bottom" HorizontalAlignment="Right" Click="DownloadBtn_Click" Background="Transparent" BorderThickness="0">
                             <Image Source="Resources/DownloadBtn.png" Width="40" Height="40"/>
                         </Button>

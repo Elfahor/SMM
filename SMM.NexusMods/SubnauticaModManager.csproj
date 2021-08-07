@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <AssemblyName>SubnauticaModManager.Mods</AssemblyName>
-    <RootNamespace>SubnauticaModManager.Backend</RootNamespace>
+    <RootNamespace>SubnauticaModManager</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

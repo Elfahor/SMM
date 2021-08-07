@@ -17,11 +17,11 @@ namespace SubnauticaModManager.Wpf
 	/// </summary>
 	public partial class MainWindow : Window
 	{
-		private List<Mod> InstalledModList;
-		private List<Mod> LatestModList;
-		private List<Mod> PopularModList;
+		//private List<Mod> InstalledModList;
+		//private List<Mod> LatestModList;
+		//private List<Mod> PopularModList;
 
-		private ModsToShow modsShown;
+		private ModFetcher.ModsToShow modsShown;
 
 		private UserData UserData { get; }
 
@@ -31,15 +31,12 @@ namespace SubnauticaModManager.Wpf
 
 			Settings.LoadFromFile();
 			NexusAPIProvider.UpdateRequestHeaders();
+			ModFetcher.InitializeModsLists();
 
 			OpenSettingsBtn.Click += OpenSettingsBtn_Click;
-			ApplyModifsBtn.Click += ApplyModifsBtn_Click;
+			ApplyModifsBtn.Click += (sender, e) => ModFetcher.ApplyJsonModifsToLocals();
 			//SearchForLastVerBtn.Click += SearchForLastVerBtn_Click;
 			StartGameBtn.Click += StartGameBtn_Click;
-
-			InstalledModList = GetMods(ModsToShow.ShowInstalled);			
-			LatestModList = GetMods(ModsToShow.ShowLatest);
-			PopularModList = GetMods(ModsToShow.ShowPopular);
 
 			try
 			{
@@ -51,42 +48,42 @@ namespace SubnauticaModManager.Wpf
 				Console.WriteLine("couldn't initialize userdata");
 			}
 
-			string[] listViewModes = Enum.GetNames(typeof(ModsToShow));
+			string[] listViewModes = Enum.GetNames(typeof(ModFetcher.ModsToShow));
 			ShowWhatComboBox.ItemsSource = listViewModes;
 			ShowWhatComboBox.SelectedIndex = 0;
 
-			modsShown = ModsToShow.ShowInstalled;
+			modsShown = ModFetcher.ModsToShow.ShowInstalled;
 
 			ShowWhatComboBox.SelectionChanged += (sender, e) =>
 			{
-				ModsToShow selectedItem = (ModsToShow)ShowWhatComboBox.SelectedIndex;
+				ModFetcher.ModsToShow selectedItem = (ModFetcher.ModsToShow)ShowWhatComboBox.SelectedIndex;
 				modsShown = selectedItem;
 				switch (selectedItem)
 				{
-					case ModsToShow.ShowInstalled:
+					case ModFetcher.ModsToShow.ShowInstalled:
 						InstalledModListControl.Visibility = Visibility.Visible;
 						OnlineModListControl.Visibility = Visibility.Collapsed;
 						InstalledModListControl.Items.Refresh();
 						break;
-					case ModsToShow.ShowLatest:
+					case ModFetcher.ModsToShow.ShowLatest:
 						InstalledModListControl.Visibility = Visibility.Collapsed;
 						OnlineModListControl.Visibility = Visibility.Visible;
 
-						OnlineModListControl.ItemsSource = LatestModList;
+						OnlineModListControl.ItemsSource = ModFetcher.LatestMods;
 						OnlineModListControl.Items.Refresh();
 						break;
-					case ModsToShow.ShowPopular:
+					case ModFetcher.ModsToShow.ShowPopular:
 						InstalledModListControl.Visibility = Visibility.Collapsed;
 						OnlineModListControl.Visibility = Visibility.Visible;
 
-						OnlineModListControl.ItemsSource = PopularModList;
+						OnlineModListControl.ItemsSource = ModFetcher.PopularMods;
 						OnlineModListControl.Items.Refresh();
 						break;
 				}
 			};
 
-			InstalledModListControl.ItemsSource = InstalledModList;
-			OnlineModListControl.ItemsSource = PopularModList;
+			InstalledModListControl.ItemsSource = ModFetcher.InstalledMods;
+			OnlineModListControl.ItemsSource = ModFetcher.PopularMods;
 
 			CollectionView viewInstalled = (CollectionView)CollectionViewSource.GetDefaultView(InstalledModListControl.ItemsSource);
 			if (!(viewInstalled is null))
@@ -96,87 +93,6 @@ namespace SubnauticaModManager.Wpf
 			viewOnline.Filter = FilterByModName;
 		}
 
-		public enum ModsToShow
-		{
-			ShowInstalled,
-			ShowLatest,
-			ShowPopular
-		}
-
-		private bool DependenciesOk() =>
-			InstalledModList.All(m =>
-				m.ModJson.Dependencies.All(d =>
-					InstalledModList.Any(mc => mc.ModJson.Id == d
-					)
-				)
-			);
-
-		[Obsolete("move to backend")]
-		public List<Mod> GetMods(ModsToShow modsToShow)
-		{
-			List<Mod> mods = new List<Mod>();
-
-			if (modsToShow == ModsToShow.ShowInstalled)
-			{
-				string[] installedMods = Directory.GetDirectories(Settings.Default.GamePath + "\\QMods", "*", SearchOption.TopDirectoryOnly);
-
-				foreach (string mod in installedMods)
-				{
-					if (Path.GetFileName(mod) != ".backups")
-					{
-						mods.Add(new Mod(mod));
-					}
-				}
-			}
-			else if (modsToShow == ModsToShow.ShowLatest)
-			{
-				try
-				{
-					string response = NexusAPIProvider.NexusHttpClient.GetStringAsync("mods/latest_added.json").Result;
-					List<Mod.DownloadedModData> downloadedModData = JsonSerializer.Deserialize<List<Mod.DownloadedModData>>(response);
-					foreach (Mod.DownloadedModData item in downloadedModData)
-					{
-						mods.Add(new Mod(item, NexusAPIProvider.NexusHttpClient));
-					}
-				}
-				catch (AggregateException e)
-				{
-					if (e.InnerException is HttpRequestException)
-					{
-						return null;
-					}
-				}
-			}
-			else if (modsToShow == ModsToShow.ShowPopular)
-			{
-				try
-				{
-					string response = NexusAPIProvider.NexusHttpClient.GetStringAsync("mods/trending.json").Result;
-					List<Mod.DownloadedModData> downloadedModData = JsonSerializer.Deserialize<List<Mod.DownloadedModData>>(response);
-					foreach (Mod.DownloadedModData item in downloadedModData)
-					{
-						mods.Add(new Mod(item, NexusAPIProvider.NexusHttpClient));
-					}
-				}
-				catch (AggregateException e)
-				{
-					if (e.InnerException is HttpRequestException)
-					{
-						return null;
-					}
-				}
-			}
-
-			return mods;
-		}
-
-		private void ApplyModifsBtn_Click(object sender, RoutedEventArgs e)
-		{
-			foreach (Mod mod in InstalledModList)
-			{
-				mod.ApplyModJson();
-			}
-		}
 
 		private void OpenSettingsBtn_Click(object sender, RoutedEventArgs e)
 		{
@@ -191,7 +107,7 @@ namespace SubnauticaModManager.Wpf
 		// move to backend
 		private void SearchForLastVerBtn_Click(object sender, RoutedEventArgs e)
 		{
-			foreach (Mod mod in InstalledModList)
+			foreach (Mod mod in ModFetcher.InstalledMods)
 			{
 				int modId = int.Parse(mod.ModJson.NexusId.Subnautica);
 			}
@@ -199,13 +115,13 @@ namespace SubnauticaModManager.Wpf
 
 		private void StartGameBtn_Click(object sender, RoutedEventArgs e)
 		{
-			if (!DependenciesOk())
+			if (!ModFetcher.DependenciesOk())
 			{
 				MessageBox.Show("Some mods have dependencies issues", "Dependency check", MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK, MessageBoxOptions.None);
 				return;
 			}
 			using Process game = new Process();
-			game.StartInfo.FileName = Path.Combine(NexusApi.Settings.Default.GamePath, "Subnautica.exe");
+			game.StartInfo.FileName = Path.Combine(Settings.Default.GamePath, "Subnautica.exe");
 			game.Start();
 		}
 
@@ -229,7 +145,7 @@ namespace SubnauticaModManager.Wpf
 				};
 				dlpage.Closed += (sender, e) =>
 				{
-					InstalledModList = GetMods(ModsToShow.ShowInstalled);
+					ModFetcher.InitializeLocalMods();
 					InstalledModListControl.Items.Refresh();
 				};
 				dlpage.ShowDialog();
@@ -244,14 +160,14 @@ namespace SubnauticaModManager.Wpf
 			}
 			else
 			{
-				string toSearch = modsShown == ModsToShow.ShowInstalled ? (item as Mod).ModJson.DisplayName : (item as Mod).OnlineInfo.Name;
+				string toSearch = modsShown == ModFetcher.ModsToShow.ShowInstalled ? (item as Mod).ModJson.DisplayName : (item as Mod).OnlineInfo.Name;
 				return !string.IsNullOrEmpty(toSearch) && toSearch.IndexOf(SearchArea.Text, StringComparison.OrdinalIgnoreCase) >= 0;
 			}
 		}
 
 		private void SearchArea_TextChanged(object sender, TextChangedEventArgs e)
 		{
-			ListView listView = modsShown == ModsToShow.ShowInstalled ? InstalledModListControl : OnlineModListControl;
+			ListView listView = modsShown == ModFetcher.ModsToShow.ShowInstalled ? InstalledModListControl : OnlineModListControl;
 			CollectionViewSource.GetDefaultView(listView.ItemsSource).Refresh();
 		}
 

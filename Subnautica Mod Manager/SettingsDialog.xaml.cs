@@ -1,7 +1,6 @@
-﻿using SubnauticaModManager.Wpf;
-using System.Windows;
+﻿using System.Windows;
 
-namespace SubnauticaModManager
+namespace SubnauticaModManager.Wpf
 {
 	/// <summary>
 	/// Logique d'interaction pour SettingsDialog.xaml
@@ -12,21 +11,21 @@ namespace SubnauticaModManager
 		{
 			InitializeComponent();
 
-			NexusApi.Settings.LoadFromFile();
+			Settings.LoadFromFile();
 
-			GamePathTextBox.Text = NexusApi.Settings.Default.GamePath;
-			NexusAPIKeyBox.Password = NexusApi.Settings.Default.NexusApiKey;
-			SaveApiKeyCheckBox.IsChecked = NexusApi.Settings.Default.SaveApiKey;
+			GamePathTextBox.Text = Settings.Default.GamePath;
+			NexusAPIKeyBox.Password = Settings.Default.NexusApiKey;
+			SaveApiKeyCheckBox.IsChecked = Settings.Default.SaveApiKey;
 
 			Closed += (sender, e) =>
 			{
-				NexusApi.Settings.Default.GamePath = GamePathTextBox.Text;
-				NexusApi.Settings.Default.SaveApiKey = (bool)SaveApiKeyCheckBox.IsChecked;
-				if (NexusApi.Settings.Default.SaveApiKey)
+				Settings.Default.GamePath = GamePathTextBox.Text;
+				Settings.Default.SaveApiKey = (bool)SaveApiKeyCheckBox.IsChecked;
+				if (Settings.Default.SaveApiKey)
 				{
-					NexusApi.Settings.Default.NexusApiKey = NexusAPIKeyBox.Password;
+					Settings.Default.NexusApiKey = NexusAPIKeyBox.Password;
 				}
-				NexusApi.Settings.SaveToFile();
+				Settings.SaveToFile();
 				NexusApi.NexusAPIProvider.UpdateRequestHeaders();
 			};
 

@@ -1,6 +1,5 @@
 ﻿using Microsoft.VisualBasic.FileIO;
 using SubnauticaModManager.CommonUtils;
-using SubnauticaModManager.NexusApi;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -30,6 +29,7 @@ namespace SubnauticaModManager.ModInstalling
 			{
 				case ".zip":
 				case ".7z":
+				case ".rar":
 					InstallDownloadedMod(fullPath);
 					break;
 				case ".exe":
@@ -64,15 +64,16 @@ namespace SubnauticaModManager.ModInstalling
 		/// <returns></returns>
 		private static string GetUrl(Mod mod)
 		{
-			Mod.FileInfo.File[] files = mod.Files.files;
-			for (int i = files.Length - 1; i >= 0; --i)
-			{
-				if (files[i].category_id == 1)
-				{
-					return files[i].content_preview_link;
-				}
-			}
-			throw new ArgumentException("This mod has no MAIN release");
+			return mod.GetLatestMainRelease().content_preview_link;
+			//Mod.NexusFilePreviewInfos.FilePreviewMetadata[] files = mod.FilePreview.Files;
+			//for (int i = files.Length - 1; i >= 0; --i)
+			//{
+			//	if (files[i].CategoryId == 1)
+			//	{
+			//		return files[i].content_preview_link;
+			//	}
+			//}
+			//throw new ArgumentException("This mod has no MAIN release");
 		}
 
 		/// <summary>
@@ -106,6 +107,7 @@ namespace SubnauticaModManager.ModInstalling
 						if (actualDirToCopy is null) // not QMod
 						{
 							Issue("This mod cannot be automatically installed. Please refer to its installation instructions");
+							return;
 						}
 						else
 						{
@@ -392,7 +394,7 @@ namespace SubnauticaModManager.ModInstalling
 			// from Microsoft.VisualBasic. Bad.
 			if (!FileSystem.FileExists(destination))
 			{
-				FileSystem.MoveDirectory(actualDirToCopy.FullName, destination);
+				FileSystem.CopyDirectory(actualDirToCopy.FullName, destination);
 			}
 		}
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -44,11 +45,11 @@ namespace SubnauticaModManager
 			{
 				Task<string> responseTask = httpClient.GetStringAsync($"mods/{OnlineInfo.ModId}/files.json");
 				string response = responseTask.Result;
-				Files = JsonSerializer.Deserialize<FileInfo>(response);
+				FilePreview = JsonSerializer.Deserialize<NexusFilePreviewInfos>(response);
 			}
 		}
 
-		public FileInfo Files { get; private set; }
+		public NexusFilePreviewInfos FilePreview { get; private set; }
 		public string LastVersion { get; set; }
 
 		public ModJsonFile ModJson { get; private set; }
@@ -176,19 +177,25 @@ namespace SubnauticaModManager
 			public string Version { get; set; }
 			public class UploadUser
 			{
-				public int member_group_id { get; set; }
-				public int member_id { get; set; }
-				public string name { get; set; }
+				[JsonPropertyName("member_group_id")]
+				public int MemberGroupId { get; set; }
+				[JsonPropertyName("member_id")]
+				public int MemberId { get; set; }
+				[JsonPropertyName("name")]
+				public string Name { get; set; }
 			}
 		}
-		public class FileInfo
-		{
 
-			public object[] file_updates { get; set; }
-			public File[] files { get; set; }
-			public class File
+		public class NexusFilePreviewInfos
+		{
+			[JsonPropertyName("file_updates")]
+			public object[] FileUpdates { get; set; }
+			[JsonPropertyName("files")]
+			public FilePreviewMetadata[] Files { get; set; }
+			public class FilePreviewMetadata
 			{
-				public int category_id { get; set; }
+				[JsonPropertyName("category_id")]
+				public int CategoryId { get; set; }
 				public object category_name { get; set; }
 				public string changelog_html { get; set; }
 				public string content_preview_link { get; set; }
@@ -243,6 +250,21 @@ namespace SubnauticaModManager
 			CustomPoster,
 			CustomHullPlate,
 			CustomBattery
+		}
+
+		public NexusFilePreviewInfos.FilePreviewMetadata GetLatestMainRelease()
+		{
+			NexusFilePreviewInfos.FilePreviewMetadata[] files = FilePreview.Files;
+			// Linq version
+			//return files.Where(f => f.CategoryId == 1).Last() ?? throw new ArgumentException();
+			for (int i = files.Length - 1; i >= 0; --i)
+			{
+				if (files[i].CategoryId == 1)
+				{
+					return files[i];
+				}
+			}
+			throw new ArgumentException("This mod has no MAIN release");
 		}
 	}
 }
