@@ -78,7 +78,7 @@ namespace SubnauticaModManager
 				{
 					if (e.InnerException is HttpRequestException)
 					{
-						Logger.Log("Couldn't download mod lists", LogType.UserInfo);
+						Logger.Log("Couldn't fetch the latest mods", LogType.UserInfo);
 						return null;
 					}
 				}
@@ -98,7 +98,7 @@ namespace SubnauticaModManager
 				{
 					if (e.InnerException is HttpRequestException)
 					{
-						Logger.Log("Couldn't download mod lists", LogType.UserInfo);
+						Logger.Log("Couldn't fetch the popular mods", LogType.UserInfo);
 						return null;
 					}
 				}

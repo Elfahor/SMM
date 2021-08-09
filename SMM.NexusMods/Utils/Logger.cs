@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
 
 namespace SubnauticaModManager.Utils
 {
@@ -24,7 +26,7 @@ namespace SubnauticaModManager.Utils
 		{
 			foreach (LoggingTarget target in s_loggingTargets)
 			{
-				target.Log(message, type);
+				target.Log($"[{DateTime.Now}] {message}", type);
 			}
 		}
 	}
