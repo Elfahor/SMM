@@ -1,4 +1,5 @@
-﻿using SubnauticaModManager.NexusApi;
+﻿using SubnauticaModManager.Utils;
+using SubnauticaModManager.NexusApi;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -28,10 +29,8 @@ namespace SubnauticaModManager.Wpf
 		public MainWindow()
 		{
 			InitializeComponent();
-
-			Settings.LoadFromFile();
-			NexusAPIProvider.UpdateRequestHeaders();
-			ModFetcher.InitializeModsLists();
+			Logger.AddLoggingTarget(new WindowsLogger());
+			Backend.Initialize();
 
 			OpenSettingsBtn.Click += OpenSettingsBtn_Click;
 			ApplyModifsBtn.Click += (sender, e) => ModFetcher.ApplyJsonModifsToLocals();
@@ -45,7 +44,7 @@ namespace SubnauticaModManager.Wpf
 			catch (AggregateException)
 			{
 				UserData = default;
-				Console.WriteLine("couldn't initialize userdata");
+				Logger.Log("Couldn't initialize UserData from the Nexus API", LogType.Info);
 			}
 
 			string[] listViewModes = Enum.GetNames(typeof(ModFetcher.ModsToShow));
@@ -90,9 +89,8 @@ namespace SubnauticaModManager.Wpf
 				viewInstalled.Filter = FilterByModName;
 			CollectionView viewOnline = (CollectionView)CollectionViewSource.GetDefaultView(OnlineModListControl.ItemsSource);
 			if (!(viewOnline is null))
-			viewOnline.Filter = FilterByModName;
+				viewOnline.Filter = FilterByModName;
 		}
-
 
 		private void OpenSettingsBtn_Click(object sender, RoutedEventArgs e)
 		{

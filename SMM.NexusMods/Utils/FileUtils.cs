@@ -5,7 +5,7 @@ using System;
 using System.IO;
 using System.Runtime.InteropServices;
 
-namespace SubnauticaModManager.CommonUtils
+namespace SubnauticaModManager.Utils
 {
 	internal static class FileUtils
 	{

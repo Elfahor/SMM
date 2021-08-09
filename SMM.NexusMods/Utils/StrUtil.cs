@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 
-namespace SubnauticaModManager.CommonUtils
+namespace SubnauticaModManager.Utils
 {
 	internal static class StrUtil
 	{

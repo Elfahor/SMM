@@ -1,5 +1,5 @@
 ﻿using Microsoft.VisualBasic.FileIO;
-using SubnauticaModManager.CommonUtils;
+using SubnauticaModManager.Utils;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -36,7 +36,7 @@ namespace SubnauticaModManager.ModInstalling
 					Process.Start(new ProcessStartInfo(fullPath));
 					break;
 				default:
-					Issue("This mod cannot be automatically installed. Please refer to its installation instructions");
+					Logger.Log("This mod cannot be automatically installed. Please refer to its installation instructions", LogType.UserInfo);
 					break;
 			}
 		}
@@ -106,7 +106,7 @@ namespace SubnauticaModManager.ModInstalling
 						actualDirToCopy = GetQModDir(tmpDirForExtraction);
 						if (actualDirToCopy is null) // not QMod
 						{
-							Issue("This mod cannot be automatically installed. Please refer to its installation instructions");
+							Logger.Log("This mod cannot be automatically installed. Please refer to its installation instructions", LogType.UserInfo);
 							return;
 						}
 						else
@@ -316,7 +316,7 @@ namespace SubnauticaModManager.ModInstalling
 			string cc2Path = Path.Combine(Settings.Default.GamePath, "QMods", "CustomCraft2SML");
 			if (!Directory.Exists(cc2Path))
 			{
-				Issue("Please install CustomCraft2 beforehand");
+				Logger.Log("Please install CustomCraft2 beforehand", LogType.UserInfo);
 				return;
 			}
 			string workingFilesDestination = Path.Combine(cc2Path, "WorkingFiles");
@@ -350,7 +350,7 @@ namespace SubnauticaModManager.ModInstalling
 			string cpPath = Path.Combine(Settings.Default.GamePath, "QMods", "CustomHullPlates", "HullPlates");
 			if (!Directory.Exists(cpPath))
 			{
-				Issue("Please install CustomPosters beforehand");
+				Logger.Log("Please install CustomPosters beforehand", LogType.UserInfo);
 				return;
 			}
 			foreach (DirectoryInfo dir in actualDirToCopy.GetDirectories())
@@ -369,7 +369,7 @@ namespace SubnauticaModManager.ModInstalling
 			string cpPath = Path.Combine(Settings.Default.GamePath, "QMods", "CustomPosters", "Posters");
 			if (!Directory.Exists(cpPath))
 			{
-				Issue("Please install CustomPosters beforehand");
+				Logger.Log("Please install CustomPosters beforehand", LogType.UserInfo);
 				return;
 			}
 			foreach (DirectoryInfo dir in actualDirToCopy.GetDirectories())
@@ -396,19 +396,6 @@ namespace SubnauticaModManager.ModInstalling
 			{
 				FileSystem.CopyDirectory(actualDirToCopy.FullName, destination);
 			}
-		}
-
-		private static void Issue(string message)
-		{
-			Console.WriteLine(message);
-			//MessageBox.Show(
-			//	message,
-			//	"Unable to auto-install",
-			//	MessageBoxButton.OK,
-			//	MessageBoxImage.Warning,
-			//	MessageBoxResult.OK,
-			//	MessageBoxOptions.None
-			//);
 		}
 	}
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SubnauticaModManager.Utils;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -77,6 +78,7 @@ namespace SubnauticaModManager
 				{
 					if (e.InnerException is HttpRequestException)
 					{
+						Logger.Log("Couldn't download mod lists", LogType.UserInfo);
 						return null;
 					}
 				}
@@ -96,6 +98,7 @@ namespace SubnauticaModManager
 				{
 					if (e.InnerException is HttpRequestException)
 					{
+						Logger.Log("Couldn't download mod lists", LogType.UserInfo);
 						return null;
 					}
 				}
