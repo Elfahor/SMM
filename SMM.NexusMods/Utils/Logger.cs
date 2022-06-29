@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
 
 namespace SubnauticaModManager.Utils
 {
 	public static class Logger
 	{
-		private static readonly List<LoggingTarget> s_loggingTargets = new List<LoggingTarget>();
+		private static readonly List<LoggingTarget> loggingTargets = new List<LoggingTarget>();
 
 		public static void AddLoggingTarget(LoggingTarget target)
 		{
-			s_loggingTargets.Add(target);
+			loggingTargets.Add(target);
 			target.Enable();
 		}
 
@@ -24,9 +24,22 @@ namespace SubnauticaModManager.Utils
 
 		public static void Log(string message, LogType type = LogType.Info)
 		{
-			foreach (LoggingTarget target in s_loggingTargets)
+			foreach (LoggingTarget target in loggingTargets)
 			{
-				target.Log($"[{DateTime.Now}] {message}", type);
+				LogToTarget(message, type, target);
+			}
+		}
+
+		private static void LogToTarget(string message, LogType type, LoggingTarget target)
+		{
+			target.Log($"[{DateTime.Now}] {message}", type);
+		}
+
+		public static void Log(string message, Type target, LogType type = LogType.Info)
+		{
+			foreach (LoggingTarget t in loggingTargets.Where(t => t.GetType() == target))
+			{
+				LogToTarget(message, type, t);
 			}
 		}
 	}

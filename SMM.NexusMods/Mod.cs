@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
 using System.Net.Http;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -10,7 +9,7 @@ namespace SubnauticaModManager
 {
 	public class Mod
 	{
-		public static readonly string[] ValidCC2Names =
+		public static readonly string[] ValidCc2Names =
 		{
 			"CustomFabricators",
 			"CustomCraftingTabs",
@@ -31,7 +30,7 @@ namespace SubnauticaModManager
 		public Mod(string path)
 		{
 			Name = Path.GetFileName(path);
-			ModJsonPath = path + "\\mod.json";
+			ModJsonPath = path + $"{Path.DirectorySeparatorChar}mod.json";
 			GetFromJson();
 		}
 

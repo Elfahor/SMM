@@ -11,9 +11,10 @@ namespace SubnauticaModManager.Utils
 			enabled = false;
 		}
 
-		public override void Enable()
+		public override bool Enable()
 		{
 			enabled = true;
+			return true;
 		}
 
 		protected override void LogMessage(string message, LogType type)

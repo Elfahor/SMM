@@ -1,12 +1,10 @@
-﻿using System;
-
-namespace SubnauticaModManager.Utils
+﻿namespace SubnauticaModManager.Utils
 {
 	public abstract class LoggingTarget
 	{
 		protected bool enabled;
 
-		public abstract void Enable();
+		public abstract bool Enable();
 		public abstract void Disable();
 		public void Log(string message, LogType type = LogType.Info)
 		{

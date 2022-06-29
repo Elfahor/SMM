@@ -22,7 +22,7 @@ namespace SubnauticaModManager
 		public static Settings Default => s_main ??= new Settings();
 
 		#region Actual Settings
-		public string GamePath { get; set; } = @"D:/Programmes/steamapps/common/Subnautica";
+		public string GamePath { get; set; } = $@"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}/Steam/steamapps/common/Subnautica";
 		public string NexusApiKey { get; set; } = "c1Brb0Vxck51a0c1bU5KRGxHbGg5RkFCRHBSYXlEWGdNanpNU3ZnbEdPMWRQc201YVRvS1ZGSU8yWElmTWNuNi0tR05CN0ZMRHJBNUlrL1ZGdWZsUjhsdz09--febdeecd49139282d0b653bebd72120eebcf7c7e";
 		public bool SaveApiKey { get; set; } = true;
 		#endregion

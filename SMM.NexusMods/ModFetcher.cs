@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
-using System.Text;
 using System.Text.Json;
 
 namespace SubnauticaModManager
@@ -53,15 +52,24 @@ namespace SubnauticaModManager
 
 			if (modsToShow == ModsToShow.ShowInstalled)
 			{
-				string[] installedMods = Directory.GetDirectories(Settings.Default.GamePath + "\\QMods", "*", SearchOption.TopDirectoryOnly);
-
-				foreach (string mod in installedMods)
+				string modDir = Settings.Default.GamePath + "/QMods";
+				if (Directory.Exists(modDir))
 				{
-					if (Path.GetFileName(mod) != ".backups")
+					string[] installedMods = Directory.GetDirectories(modDir, "*", SearchOption.TopDirectoryOnly);
+				
+					foreach (string mod in installedMods)
 					{
-						mods.Add(new Mod(mod));
+						if (Path.GetFileName(mod) != ".backups")
+						{
+							mods.Add(new Mod(mod));
+						}
 					}
 				}
+				else
+				{
+					Logger.Log($"Path not found {Settings.Default.GamePath}", LogType.Error);
+				}
+
 			}
 			else if (modsToShow == ModsToShow.ShowLatest)
 			{

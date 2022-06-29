@@ -1,6 +1,5 @@
 ﻿using Microsoft.VisualBasic.FileIO;
 using SubnauticaModManager.Utils;
-using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -50,7 +49,9 @@ namespace SubnauticaModManager.ModInstalling
 		{
 			string url = GetUrl(mod);
 			// use a regex to extract file name
-			Regex pattern = new Regex(@"^https://file-metadata\.nexusmods\.com/file/nexus-files-s3-meta/1155/[0-9]{1,3}/(?<filename>[\w\._\s-]*)");
+			Regex pattern =
+				new Regex(
+					@"^https://file-metadata\.nexusmods\.com/file/nexus-files-s3-meta/1155/[0-9]{1,3}/(?<filename>[\w\._\s-]*)");
 			Match match = pattern.Match(url);
 			StringBuilder fileName = new StringBuilder(match.Groups["filename"].Value);
 			fileName.Replace(".json", "");
@@ -160,7 +161,7 @@ namespace SubnauticaModManager.ModInstalling
 					if (f.Extension == ".txt" && !f.Name.Contains("README"))
 					{
 						string content = File.ReadAllText(f.FullName);
-						if (content.Contains(Mod.ValidCC2Names, StrUtil.StrContainsOptions.Or))
+						if (content.Contains(Mod.ValidCc2Names, StrUtil.StrContainsOptions.Or))
 						{
 							f.CopyTo(Path.Combine(workingFiles, f.Name));
 						}

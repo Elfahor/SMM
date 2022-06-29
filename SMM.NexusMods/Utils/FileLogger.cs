@@ -26,10 +26,19 @@ namespace SubnauticaModManager.Utils
 			file.Dispose();
 		}
 
-		public override void Enable()
+		public override bool Enable()
 		{
 			enabled = true;
-			file = File.Open(path, FileMode.OpenOrCreate);
+			try
+			{
+				file = File.Open(path, FileMode.OpenOrCreate);
+				return true;
+			}
+			catch (IOException e)
+			{
+				Logger.Log("Couldn't initialize file logger", typeof(ConsoleLogger), LogType.Error);
+				return false;
+			}
 		}
 
 		protected override void LogMessage(string message, LogType type)

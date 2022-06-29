@@ -1,0 +1,33 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:subnauticaModManager="clr-namespace:SubnauticaModManager;assembly=SubnauticaModManager.Mods"
+        mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="450"
+        x:Class="SubnauticaModManager.Avalonia.MainWindow"
+        Title="SubnauticaModManager.Avalonia"
+        Name="Win">
+        <DockPanel Name="MainPanel">
+                <!-- Top controls -->
+                <StackPanel DockPanel.Dock="Top">
+                        <Button Click="OpenSettings">Settings</Button>
+                </StackPanel>
+                <!-- Start Game-->
+                <Button DockPanel.Dock="Bottom" Background="Green" Click="StartGame">Start Game</Button>
+                <!-- Mod listing -->
+                <TabControl>
+                        <TabItem Header="Installed mods">
+                                <ItemsControl Items="{Binding InstalledMods}">
+                                        <ItemsControl.ItemTemplate>
+                                                <DataTemplate DataType="subnauticaModManager:Mod">
+                                                        <TextBlock Text="{Binding Name}"></TextBlock>
+                                                </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                        </TabItem>
+                        <TabItem Header="Find online mods">
+                                <TextBlock>List 2</TextBlock>
+                        </TabItem>
+                </TabControl>
+        </DockPanel>
+</Window>

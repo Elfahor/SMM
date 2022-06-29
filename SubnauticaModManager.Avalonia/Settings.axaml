@@ -1,0 +1,15 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="300" d:DesignHeight="200"
+        Width="300" Height="200" CanResize="False"
+        x:Class="SubnauticaModManager.Avalonia.Settings"
+        Title="Settings">
+    <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,*">
+        <TextBlock Grid.Row="0" Grid.Column="0">Game Path</TextBlock>
+        <TextBox   Grid.Row="0" Grid.Column="1" Text="{Binding GamePath}"></TextBox>
+        <TextBlock Grid.Row="1" Grid.Column="0">Nexus Api Key</TextBlock>
+        <TextBox   Grid.Row="1" Grid.Column="1" Text="{Binding NexusApiKey}"></TextBox>
+    </Grid>
+</Window>
