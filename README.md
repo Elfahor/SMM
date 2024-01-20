@@ -1,3 +1,8 @@
+# ABANDONNED
+
+Due to changes in the NexusMods Terms os Service, many Subnautica modders pulled their mods off of the website. This led me to stop working on this project and never finish. 
+Furthermore, it dates back to my very first dabbles in programming and, should I ever get back to such a thing, I'd probably restart from scratch.
+
 # SMM
 Automatic mod manager for the game Subnautica.
 
